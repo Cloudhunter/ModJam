@@ -13,4 +13,14 @@ public class LoggerRPG
 	{
 		logger = event.getModLog();
 	}
+	
+	public static void info(String msg)
+	{
+		logger.info(msg);
+	}
+	
+	public static void warning(String msg)
+	{
+		logger.warning(msg);
+	}
 }
