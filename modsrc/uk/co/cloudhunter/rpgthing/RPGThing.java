@@ -7,7 +7,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = "RPGThing")
+@Mod(modid = "RPGThing", name = "RPGThing", version = "0.1")
 @NetworkMod
 public class RPGThing 
 {

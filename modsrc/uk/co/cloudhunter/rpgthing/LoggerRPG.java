@@ -12,7 +12,7 @@ public class LoggerRPG
 	
 	public static void setupLogger(FMLPreInitializationEvent event)
 	{
-		logger = Logger.getLogger("RPGThing");
+		logger = event.getModLog();
 	}
 	
 	public static void info(String msg)
