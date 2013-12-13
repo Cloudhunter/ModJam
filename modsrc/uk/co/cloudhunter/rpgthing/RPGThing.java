@@ -16,12 +16,13 @@ public class RPGThing
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		LoggerRPG.setupLogger(event);
+		LoggerRPG.info("RPGThing starting up! PreInit.");
 	}
 
 	@Subscribe
 	public void init(FMLInitializationEvent event)
 	{
-		
+		LoggerRPG.info("RPGThing starting up! Init.");
 	}
 	
 }
