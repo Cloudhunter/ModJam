@@ -16,7 +16,7 @@ public class RPGThing
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		LoggerRPG.setupLogger(event);
-		LoggerRPG.info("RPGThing starting up! PreInit.");
+		LoggerRPG.info("RPGThing starting up! PreInit."); // much modjam, very pause :(
 	}
 
 	@EventHandler
