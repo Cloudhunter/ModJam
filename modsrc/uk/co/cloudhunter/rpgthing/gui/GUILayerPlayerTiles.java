@@ -95,7 +95,14 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			emitQuad(x + 4, y + 24, 0.5f, 0, 1.0f, 0.5f, 8, 8, 1.0f);
 		else
 			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
+		emitQuad(x + 4, y + 9, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
 		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glPushMatrix();
+		GL11.glScalef(0.4f, 0.4f, 50.0f);
+		String lvl = "99";
+		int glen = mc.fontRenderer.getStringWidth(lvl) - 8;
+		mc.fontRenderer.drawStringWithShadow(lvl, (int) x + 35 - (glen / 2), (int) y + 29, 0x00FFFFFF);
+		GL11.glPopMatrix();
 	}
 
 	public void renderPlayerBuffs(EntityLivingBase entity, int x, int y) {
