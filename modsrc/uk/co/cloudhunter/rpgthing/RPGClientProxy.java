@@ -14,13 +14,15 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 public class RPGClientProxy extends RPGCommonProxy {
 	private HashMap<String, ILayerGUI> layerGUI;
-	
 
 	public RPGClientProxy() {
 		super();
@@ -37,6 +39,8 @@ public class RPGClientProxy extends RPGCommonProxy {
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
+		for (ITickHandler o : RPGThing.getClientTickHandlers())
+			TickRegistry.registerTickHandler(o, Side.CLIENT);
 
 		// Initialize all GUI layer objects
 		for (Entry<String, Class<?>> entry : RPGThing.GUIs.getEntries()) {

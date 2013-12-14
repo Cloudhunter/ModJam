@@ -1,5 +1,6 @@
 package uk.co.cloudhunter.rpgthing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
+import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -62,6 +64,27 @@ public class RPGThing {
 		public static Set<Entry<String, Class<?>>> getEntries() {
 			return renderLayers.entrySet();
 		}
+	}
+
+	private static ArrayList<ITickHandler> clientTicks = new ArrayList<ITickHandler>();
+	private static ArrayList<ITickHandler> serverTicks = new ArrayList<ITickHandler>();
+
+	public static void registerClientTickHandler(ITickHandler handler) {
+		if (!clientTicks.contains(handler))
+			clientTicks.add(handler);
+	}
+
+	public static void registerServerTickHandler(ITickHandler handler) {
+		if (!serverTicks.contains(handler))
+			serverTicks.add(handler);
+	}
+	
+	public static ITickHandler[] getClientTickHandlers() {
+		return clientTicks.toArray(new ITickHandler[0]);
+	}
+	
+	public static ITickHandler[] getServerTickHandlers() {
+		return serverTicks.toArray(new ITickHandler[0]);
 	}
 
 	@SidedProxy(clientSide = "uk.co.cloudhunter.rpgthing.RPGClientProxy",

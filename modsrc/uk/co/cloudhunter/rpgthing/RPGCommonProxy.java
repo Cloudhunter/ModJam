@@ -1,5 +1,7 @@
 package uk.co.cloudhunter.rpgthing;
 
+import java.util.ArrayList;
+
 import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
@@ -13,11 +15,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 public class RPGCommonProxy implements IRPGNetworkHandler {
 
@@ -29,6 +34,8 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	protected Party currentParty;
 	protected Player currentPlayer;
+
+	
 
 	public RPGCommonProxy() {
 		this.database = new Database();
@@ -57,6 +64,8 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	public void postInit(FMLPostInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(RPGThing.getProxy());
+		for (ITickHandler o : RPGThing.getServerTickHandlers())
+			TickRegistry.registerTickHandler(o, Side.SERVER);
 	}
 
 	@Override
