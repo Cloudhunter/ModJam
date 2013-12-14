@@ -55,6 +55,10 @@ public class RPGThing {
 			serverSide = "uk.co.cloudhunter.rpgthing.RPGCommonProxy")
 	public static RPGCommonProxy proxy;
 
+	public RPGThing() {
+		RPGThing.instance = this;
+	}
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		RPGThing.log = new LoggerRPG();
