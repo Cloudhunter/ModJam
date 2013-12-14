@@ -132,6 +132,8 @@ public class Database {
 		 * @return All matching rows
 		 */
 		public ArrayList<HashMap<Integer, Object>> match(int field_num, Object value, int cap) {
+			if (struct.get(field_num) == null)
+				throw new UnsupportedOperationException("No such field, fail.");
 			if (!value.getClass().equals(struct.get(field_num)))
 				throw new UnsupportedOperationException("Search object " + value.getClass().getName()
 						+ " not matching typeof " + struct.get(field_num).getName() + ", fail.");
@@ -144,6 +146,31 @@ public class Database {
 					results.add(row);
 			}
 			return results;
+		}
+
+		/**
+		 * Map a label to row id
+		 * 
+		 * @param name
+		 *            The name
+		 * @return The id
+		 */
+		public int map(String name) {
+			for (int i = 0; i < labels.size(); i++)
+				if (labels.get(i).equalsIgnoreCase(name))
+					return i;
+			return -1;
+		}
+
+		/**
+		 * Map an id to a label
+		 * 
+		 * @param i
+		 *            The ID
+		 * @return The name
+		 */
+		public String map(int i) {
+			return labels.get(i);
 		}
 
 		/**
