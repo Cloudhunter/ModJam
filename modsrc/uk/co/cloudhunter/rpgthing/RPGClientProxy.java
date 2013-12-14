@@ -11,6 +11,7 @@ import uk.co.cloudhunter.rpgthing.network.ModPacket;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.Player;
 
@@ -21,6 +22,12 @@ public class RPGClientProxy extends RPGCommonProxy {
 		super();
 		this.layerGUI = new HashMap<String, ILayerGUI>();
 		this.clientNetwork = new ClientPacketHandler();
+	}
+
+	@Override
+	public void init(FMLInitializationEvent event) {
+		super.init(event);
+		RPGThing.GUIs.registerGUI("PlayerTiles", uk.co.cloudhunter.rpgthing.gui.GUILayerPlayerTiles.class);
 	}
 
 	@Override
@@ -40,7 +47,6 @@ public class RPGClientProxy extends RPGCommonProxy {
 		}
 	}
 
-	@Override
 	public void render(RenderGameOverlayEvent event) {
 		for (ILayerGUI g : layerGUI.values())
 			g.render(event);

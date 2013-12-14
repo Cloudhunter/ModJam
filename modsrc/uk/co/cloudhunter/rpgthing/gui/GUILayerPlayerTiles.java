@@ -1,6 +1,7 @@
 package uk.co.cloudhunter.rpgthing.gui;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -41,9 +42,10 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
-		EntityPlayer player = mc.theWorld.getPlayerEntityByName(mc.thePlayer.username);
-		for (int i = 0; i < 6; i++)
-			renderPlayer(player, "Player", 12f, 26f * i, playerIconSize / 3);
+		List<EntityPlayer> entities = mc.theWorld.playerEntities;
+
+		for (int i = 0; i < entities.size(); i++)
+			renderPlayer(entities.get(i), "Player", 12f, 26f * i, playerIconSize / 3);
 	}
 
 	public void renderPlayer(EntityPlayer entity, String altName, float x, float y, float scale) {
@@ -62,7 +64,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		GL11.glColor3d(1.0, 1.0, 1.0);
 		mc.fontRenderer.drawStringWithShadow(label, (int) x + 18, (int) y + 12, 0x00FFFFFF);
 		GL11.glDisable(GL11.GL_BLEND);
-		
+
 		if (entity != null) {
 			GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 			GL11.glPushMatrix();
@@ -80,10 +82,17 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 
 			renderPlayerBuffs(entity, (int) x + 14, (int) y + 22);
 		}
-		
+
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
+		mc.getTextureManager()
+				.bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
+		if (entity == null)
+			emitQuad(x + 4, y + 24, 0f, 0.5f, 0.5f, 1f, 8, 8, 1.0f);
+		else if (true)
+			emitQuad(x + 4, y + 24, 0.5f, 0, 1.0f, 0.5f, 8, 8, 1.0f);
+		else
+			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 

@@ -40,16 +40,11 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	}
 
 	public void init(FMLInitializationEvent event) {
-		RPGThing.GUIs.registerGUI("PlayerTiles", uk.co.cloudhunter.rpgthing.gui.GUILayerPlayerTiles.class);
+
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(RPGThing.getInstance());
-	}
-
-	public void render(RenderGameOverlayEvent event) {
-		// TODO Auto-generated method stub
-
+		MinecraftForge.EVENT_BUS.register(RPGThing.getProxy());
 	}
 
 	@Override
