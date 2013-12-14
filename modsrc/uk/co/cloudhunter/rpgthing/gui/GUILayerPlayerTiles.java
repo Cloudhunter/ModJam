@@ -45,12 +45,20 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		emitQuad(8, 8, 0, 0, 1, 1, 24, 24, 1.0F);
-		GL11.glDisable(GL11.GL_BLEND);
-
+		emitQuad(9, 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
 		
+
+		String label = theMinecraft.thePlayer.username;
+		int dlen = theMinecraft.fontRenderer.getStringWidth(label);
+		theMinecraft.getTextureManager().bindTexture(
+				new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-label.png"));
+		emitQuad(22, 2, 0.1, 0.3, 0.3, 0.75, 12, 30, 1);
+		emitQuad(34, 2, 0.4, 0.3, 0.6, 0.75, (dlen * 2) - 34, 30, 1);
+		emitQuad(dlen * 2, 2, 0.7, 0.3, 0.9, 0.75, 12, 30, 1);
 		
 		theMinecraft.fontRenderer.drawStringWithShadow(theMinecraft.thePlayer.username, 36, 11, 0x00FFFFFF);
+		GL11.glDisable(GL11.GL_BLEND);
+		
 		renderPlayer(theMinecraft.thePlayer, 20f, 16f, playerIconSize / 3);
 		renderPlayerBuffs(theMinecraft.thePlayer, 36, 22);
 	}
@@ -99,8 +107,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		tessellator.addVertexWithUV(x, y + height, this.zLevel, u * clamp, v2 * clamp);
-		tessellator.addVertexWithUV(x + height, y + height, this.zLevel, u2 * clamp, v2 * clamp);
-		tessellator.addVertexWithUV(x + height, y, this.zLevel, u2 * clamp, v * clamp);
+		tessellator.addVertexWithUV(x + width, y + height, this.zLevel, u2 * clamp, v2 * clamp);
+		tessellator.addVertexWithUV(x + width, y, this.zLevel, u2 * clamp, v * clamp);
 		tessellator.addVertexWithUV(x, y, this.zLevel, u * clamp, v * clamp);
 		tessellator.draw();
 	}
