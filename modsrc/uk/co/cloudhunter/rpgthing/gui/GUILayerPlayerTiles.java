@@ -39,7 +39,12 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
-		renderPlayerBuffs(theMinecraft.thePlayer, 32, 32);
+		
+		drawRect(8, 8, 128, 32, 0xFF000000);
+		drawRect(8, 8, 32, 32, 0xFFCCCCCC);
+		int len = theMinecraft.fontRenderer.drawStringWithShadow(theMinecraft.thePlayer.username, 34, 11, 0x00FFFFFF);
+		renderPlayer(theMinecraft.thePlayer, 20f, 16f, playerIconSize / 3);
+		renderPlayerBuffs(theMinecraft.thePlayer, 36, 22);
 	}
 
 	public void renderPlayer(EntityLivingBase entity, float x, float y, float scale) {
@@ -49,12 +54,10 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		GL11.glScalef(-scale, scale, scale);
 		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 		RenderHelper.enableStandardItemLighting();
-		GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-		GL11.glTranslatef(0.0F, entity.yOffset, 0.0F);
-		RenderManager.instance.playerViewY = 180.0F;
 		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
 		GL11.glPopMatrix();
 		RenderHelper.disableStandardItemLighting();
+		
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
