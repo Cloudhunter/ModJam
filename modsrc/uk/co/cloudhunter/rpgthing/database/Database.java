@@ -39,6 +39,11 @@ public class Database {
 		 * Value dec
 		 */
 		private HashMap<Integer, Object> values;
+		private final int row_id;
+
+		public Row(int id) {
+			this.row_id = id;
+		}
 
 		public void put(int i, Object o) {
 			values.put(i, o);
@@ -46,6 +51,10 @@ public class Database {
 
 		public Object get(int i) {
 			return values.get(i);
+		}
+
+		public int id() {
+			return row_id;
 		}
 	}
 
@@ -101,7 +110,7 @@ public class Database {
 		 */
 		public int put(Object[]... vals) {
 			int v = auto_inc++;
-			Row row = new Row();
+			Row row = new Row(v);
 			if (vals.length != struct.size())
 				throw new UnsupportedOperationException("Wrong length, fail.");
 			for (int i = 0; i < vals.length; i++) {
@@ -280,8 +289,8 @@ public class Database {
 			int num_rows = in.readInt();
 			auto_inc = in.readInt();
 			for (int i = 0; i < num_rows; i++) {
-				Row row = new Row();
 				int row_id = in.readInt();
+				Row row = new Row(row_id);
 				for (int j = 0; j < struct.size(); j++) {
 					int typeof = in.readInt();
 					if (typeof == -1)

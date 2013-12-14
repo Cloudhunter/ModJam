@@ -15,11 +15,12 @@ public class TableFactory {
 		Database db = RPGThing.getProxy().getDatabase();
 
 		tablePlayers = db.create("players");
-		tablePlayers.struct(0, String.class, "name");
-		tablePlayers.struct(1, Integer.class, "faction");
+		tablePlayers.struct(0, Integer.class, "uid");
+		tablePlayers.struct(1, String.class, "name");
+		tablePlayers.struct(2, Integer.class, "faction");
 
 		tableParties = db.create("parties");
-		tableParties.struct(0, String.class, "uid");
+		tableParties.struct(0, Integer.class, "uid");
 		tableParties.struct(1, String.class, "members");
 	}
 
