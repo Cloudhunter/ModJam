@@ -46,7 +46,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		List<EntityPlayer> entities = mc.theWorld.playerEntities;
 
 		for (int i = 0; i < entities.size(); i++)
-			renderPlayer(entities.get(i), "Player", 12f, 26f * i, playerIconSize / 3);
+			renderPlayer(entities.get(i), "Player", 12f, 26f + 26f * i, playerIconSize / 3);
 	}
 
 	public void renderPlayer(EntityPlayer entity, String altName, float x, float y, float scale) {
@@ -69,7 +69,10 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		if (entity != null) {
 			GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 			GL11.glPushMatrix();
-			GL11.glTranslatef(x, y + 15, 50.0F);
+			if (entity.username.equals(mc.thePlayer.username))
+				GL11.glTranslatef(x, y + 14, 50.0F);
+			else
+				GL11.glTranslatef(x, y + 28, 50.0F);
 			GL11.glScalef(-scale, scale, scale);
 			GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 			RenderHelper.enableStandardItemLighting();
@@ -98,10 +101,11 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		emitQuad(x + 4, y + 9, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPushMatrix();
+		String lvl = " 1";
+		int glen = mc.fontRenderer.getStringWidth(lvl);
+		GL11.glTranslatef(x + 3 + (glen / 4), y + 12, 50.0F);
 		GL11.glScalef(0.4f, 0.4f, 50.0f);
-		String lvl = "99";
-		int glen = mc.fontRenderer.getStringWidth(lvl) - 8;
-		mc.fontRenderer.drawStringWithShadow(lvl, (int) x + 35 - (glen / 2), (int) y + 29, 0x00FFFFFF);
+		mc.fontRenderer.drawStringWithShadow(lvl, (int) 0, (int) 0, 0x00FFFFFF);
 		GL11.glPopMatrix();
 	}
 
