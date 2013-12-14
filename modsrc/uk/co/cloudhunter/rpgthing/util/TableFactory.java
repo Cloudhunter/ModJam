@@ -18,6 +18,8 @@ public class TableFactory {
 		tablePlayers.struct(0, Integer.class, "uid");
 		tablePlayers.struct(1, String.class, "name");
 		tablePlayers.struct(2, Integer.class, "faction");
+		tablePlayers.struct(3, Integer.class, "level");
+		tablePlayers.struct(4, Double.class, "experience");
 
 		tableParties = db.create("parties");
 		tableParties.struct(0, Integer.class, "uid");

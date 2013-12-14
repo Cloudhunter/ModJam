@@ -14,8 +14,10 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -34,8 +36,6 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	protected Party currentParty;
 	protected Player currentPlayer;
-
-	
 
 	public RPGCommonProxy() {
 		this.database = new Database();
@@ -93,6 +93,11 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 		Packet250CustomPayload payload = packet.toPacket();
 		payload.channel = RPGThing.networkChannel();
 		PacketDispatcher.sendPacketToPlayer(payload, (Player) player);
+	}
+
+	@EventHandler
+	private void onLivingDeathEvent(LivingDeathEvent event) {
+		
 	}
 
 }
