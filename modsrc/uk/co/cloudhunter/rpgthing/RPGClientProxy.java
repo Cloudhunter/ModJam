@@ -6,15 +6,21 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import uk.co.cloudhunter.rpgthing.gui.ILayerGUI;
+import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
+import uk.co.cloudhunter.rpgthing.network.ModPacket;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.network.Player;
 
 public class RPGClientProxy extends RPGCommonProxy {
 	private HashMap<String, ILayerGUI> layerGUI;
 
 	public RPGClientProxy() {
 		super();
-		layerGUI = new HashMap<String, ILayerGUI>();
+		this.layerGUI = new HashMap<String, ILayerGUI>();
+		this.clientNetwork = new ClientPacketHandler();
 	}
 
 	@Override
@@ -36,8 +42,22 @@ public class RPGClientProxy extends RPGCommonProxy {
 
 	@Override
 	public void render(RenderGameOverlayEvent event) {
-		// Render all layer objects
 		for (ILayerGUI g : layerGUI.values())
 			g.render(event);
+	}
+
+	@Override
+	public void accept(ModPacket packet, Player player) {
+		if (packet.getPacketIsForServer())
+			serverNetwork.accept(packet, player);
+		else
+			clientNetwork.accept(packet, player);
+	}
+
+	@Override
+	public void sendToServer(ModPacket packet) {
+		Packet250CustomPayload payload = packet.toPacket();
+		payload.channel = RPGThing.networkChannel();
+		FMLClientHandler.instance().sendPacket(payload);
 	}
 }

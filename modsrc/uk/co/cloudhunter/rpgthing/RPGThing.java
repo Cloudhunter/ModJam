@@ -16,7 +16,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = "RPGThing", name = "RPGThing", version = "0.1")
-@NetworkMod
+@NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = "rpgthing",
+		packetHandler = uk.co.cloudhunter.rpgthing.network.DefaultPacketHandler.class)
 public class RPGThing {
 
 	private static RPGThing instance;
@@ -35,6 +36,10 @@ public class RPGThing {
 	}
 
 	public static String assetKey() {
+		return "rpgthing";
+	}
+
+	public static String networkChannel() {
 		return "rpgthing";
 	}
 

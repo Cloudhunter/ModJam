@@ -299,6 +299,10 @@ public class Database {
 	 */
 	private HashMap<String, Table> tables;
 
+	public Database() {
+		this.tables = new HashMap<String, Database.Table>();
+	}
+
 	/**
 	 * Creates a blank table
 	 * 
@@ -307,7 +311,8 @@ public class Database {
 	 * @return The table result
 	 */
 	public Table create(String name) {
-		return tables.put(name, new Table());
+		tables.put(name, new Table());
+		return tables.get(name);
 	}
 
 	/**
