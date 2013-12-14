@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * I REGRET NOTHING!
@@ -33,9 +35,22 @@ public class Database {
 	}
 
 	public static class Table {
+
+		/**
+		 * Structure dec
+		 */
 		private HashMap<Integer, Class<?>> struct;
+		/**
+		 * Label dec
+		 */
 		private HashMap<Integer, String> labels;
+		/**
+		 * Value dec
+		 */
 		private HashMap<Integer, HashMap<Integer, Object>> values;
+		/**
+		 * Count field
+		 */
 		private int auto_inc;
 
 		public Table() {
@@ -45,6 +60,16 @@ public class Database {
 			this.auto_inc = 0;
 		}
 
+		/**
+		 * Declares a field in the table
+		 * 
+		 * @param i
+		 *            The ordinal
+		 * @param val
+		 *            The value typeof
+		 * @param label
+		 *            The label
+		 */
 		public void struct(int i, Class<?> val, String label) {
 			if (getPackRule(val) == -1)
 				throw new UnsupportedOperationException("Can't specify non-primitive field types, fail.");
@@ -52,6 +77,13 @@ public class Database {
 			this.labels.put(i, label);
 		}
 
+		/**
+		 * Puts a row into the table
+		 * 
+		 * @param vals
+		 *            All values
+		 * @return The row ID which was inserted
+		 */
 		public int put(Object[]... vals) {
 			int v = auto_inc++;
 			HashMap<Integer, Object> row = new HashMap<Integer, Object>();
@@ -66,18 +98,84 @@ public class Database {
 			return v;
 		}
 
+		/**
+		 * Removes a row from the table; this doesn't reset auto increment rules
+		 * 
+		 * @param i
+		 *            The row number to remove
+		 * @return Number of affected rows
+		 */
 		public int remove(int i) {
 			return (values.remove(i) != null) ? 1 : 0;
 		}
 
+		/**
+		 * Gets a row from the table
+		 * 
+		 * @param j
+		 *            The row number
+		 * @return The row, or nothing
+		 */
 		public HashMap<Integer, Object> get(int j) {
 			return values.get(j);
 		}
 
+		/**
+		 * Return all results which match a value declared
+		 * 
+		 * @param field_num
+		 *            The field number
+		 * @param value
+		 *            The value
+		 * @param cap
+		 *            Max value count to return
+		 * @return All matching rows
+		 */
+		public ArrayList<HashMap<Integer, Object>> match(int field_num, Object value, int cap) {
+			if (!value.getClass().equals(struct.get(field_num)))
+				throw new UnsupportedOperationException("Search object " + value.getClass().getName()
+						+ " not matching typeof " + struct.get(field_num).getName() + ", fail.");
+			ArrayList<HashMap<Integer, Object>> results = new ArrayList<HashMap<Integer, Object>>();
+			for (int i = 0; i < rows(); i++) {
+				if (results.size() > cap)
+					break;
+				HashMap<Integer, Object> row = get(i);
+				if (row.get(field_num).equals(value))
+					results.add(row);
+			}
+			return results;
+		}
+
+		/**
+		 * The number of rows in the table
+		 * 
+		 * @return The number of rows
+		 */
 		public int rows() {
 			return values.size();
 		}
 
+		/**
+		 * The number of non-empty rows in the table; this is costly, so use sparingly
+		 * 
+		 * @return The number of nonempty rows
+		 */
+		public int nonEmptyRows() {
+			int result = 0;
+			for (int i = 0; i < values.size(); i++)
+				if (values.get(i) != null)
+					result++;
+			return result;
+		}
+
+		/**
+		 * Save the table
+		 * 
+		 * @param stream
+		 *            The stream
+		 * @throws IOException
+		 *             The boo-boo
+		 */
 		public void save(OutputStream stream) throws IOException {
 			DataOutputStream out = new DataOutputStream(stream);
 			out.writeInt(rows());
@@ -126,6 +224,14 @@ public class Database {
 			}
 		}
 
+		/**
+		 * Load the table
+		 * 
+		 * @param stream
+		 *            The stream
+		 * @throws IOException
+		 *             The boo-boo
+		 */
 		public void load(InputStream stream) throws IOException {
 			DataInputStream in = new DataInputStream(stream);
 			int num_rows = in.readInt();
@@ -161,18 +267,82 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Map of all tables
+	 */
 	private HashMap<String, Table> tables;
 
+	/**
+	 * Creates a blank table
+	 * 
+	 * @param name
+	 *            The name
+	 * @return The table result
+	 */
 	public Table create(String name) {
 		return tables.put(name, new Table());
 	}
 
+	/**
+	 * Gets a table
+	 * 
+	 * @param name
+	 *            The name
+	 * @return The table result
+	 */
 	public Table get(String name) {
 		return tables.get(name);
 	}
 
+	/**
+	 * Removes a table
+	 * 
+	 * @param name
+	 *            The name
+	 * @return Affected result count
+	 */
 	public int remove(String name) {
 		return (tables.remove(name) != null) ? 1 : 0;
+	}
+
+	/**
+	 * Save the database state, this will dump all tables to the outputstream specified.
+	 * 
+	 * @param stream
+	 *            The outputstream
+	 * @throws IOException
+	 *             If something went wrong
+	 */
+	public void save(OutputStream stream) throws IOException {
+		DataOutputStream out = new DataOutputStream(stream);
+		out.writeInt(tables.size());
+		for (Entry<String, Table> table : tables.entrySet()) {
+			out.writeInt(table.getKey().length());
+			for (char c : table.getKey().toCharArray())
+				out.writeChar(c);
+			table.getValue().save(stream);
+		}
+	}
+
+	/**
+	 * Load the database state. The tables all have to exist already, so they should be
+	 * statically declared and setup (including schema)
+	 * 
+	 * @param stream
+	 *            The inputstream
+	 * @throws IOException
+	 *             If something went wrong
+	 */
+	public void load(InputStream stream) throws IOException {
+		DataInputStream in = new DataInputStream(stream);
+		int table_count = in.readInt();
+		for (int i = 0; i < table_count; i++) {
+			int j = in.readInt();
+			StringBuilder result = new StringBuilder();
+			for (int k = 0; k < j; k++)
+				result.append(in.readChar());
+			get(result.toString()).load(stream);
+		}
 	}
 
 }
