@@ -43,15 +43,15 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			return;
 		EntityPlayer player = mc.theWorld.getPlayerEntityByName(mc.thePlayer.username);
 		for (int i = 0; i < 6; i++)
-			renderPlayer(player, 12f, 26f * i, playerIconSize / 3);
+			renderPlayer(player, "Player", 12f, 26f * i, playerIconSize / 3);
 	}
 
-	public void renderPlayer(EntityPlayer entity, float x, float y, float scale) {
+	public void renderPlayer(EntityPlayer entity, String altName, float x, float y, float scale) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		String label = entity.username;
+		String label = (entity != null) ? entity.username : altName;
 		int dlen = mc.fontRenderer.getStringWidth(label) - 8;
-		if (entity.isDead || true)
+		if (entity != null && entity.isDead)
 			GL11.glColor3d(1.0, 0.25, 0.25);
 		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-label.png"));
 		emitQuad(x + 12, y, 12, 13, 32, 51, 10, 32, 0.015625d);
@@ -60,25 +60,31 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
 		emitQuad(x - 11, y + 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
 		GL11.glColor3d(1.0, 1.0, 1.0);
-		mc.fontRenderer.drawStringWithShadow(entity.username, (int) x + 18, (int) y + 12, 0x00FFFFFF);
+		mc.fontRenderer.drawStringWithShadow(label, (int) x + 18, (int) y + 12, 0x00FFFFFF);
 		GL11.glDisable(GL11.GL_BLEND);
+		
+		if (entity != null) {
+			GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+			GL11.glPushMatrix();
+			GL11.glTranslatef(x, y + 15, 50.0F);
+			GL11.glScalef(-scale, scale, scale);
+			GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+			RenderHelper.enableStandardItemLighting();
+			RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+			GL11.glPopMatrix();
+			RenderHelper.disableStandardItemLighting();
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+			OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
-		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-		GL11.glPushMatrix();
-		GL11.glTranslatef(x, y + 15, 50.0F);
-		GL11.glScalef(-scale, scale, scale);
-		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-		RenderHelper.enableStandardItemLighting();
-		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
-		GL11.glPopMatrix();
-		RenderHelper.disableStandardItemLighting();
-
-		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-
-		renderPlayerBuffs(entity, (int) x + 14, (int) y + 22);
+			renderPlayerBuffs(entity, (int) x + 14, (int) y + 22);
+		}
+		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	public void renderPlayerBuffs(EntityLivingBase entity, int x, int y) {
@@ -93,10 +99,12 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
 				if (potion.hasStatusIcon()) {
 					int index = potion.getStatusIconIndex();
-					int dx = x + (i % buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
-					int dy = y + (i / buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
-					emitQuad(dx, dy, (index % 8) * 18, 198 + (index / 8) * 18, 18 + (index % 8) * 18,
-							18 + 198 + (index / 8) * 18, buffIconSize, buffIconSize, 0.00390625F);
+					if (potioneffect.duration > 100 || (potioneffect.duration % 10 > 5)) {
+						int dx = x + (i % buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
+						int dy = y + (i / buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
+						emitQuad(dx, dy, (index % 8) * 18, 198 + (index / 8) * 18, 18 + (index % 8) * 18,
+								18 + 198 + (index / 8) * 18, buffIconSize, buffIconSize, 0.00390625F);
+					}
 				}
 			}
 		}
