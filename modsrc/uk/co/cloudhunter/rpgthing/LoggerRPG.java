@@ -6,22 +6,22 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-public class LoggerRPG 
-{
-	public static Logger logger;
-	
-	public static void setupLogger(FMLPreInitializationEvent event)
-	{
+public class LoggerRPG {
+	private static Logger logger;
+
+	public void setupLogger(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 	}
-	
-	public static void info(String msg)
-	{
+
+	public void info(String msg) {
 		logger.info(msg);
 	}
-	
-	public static void warning(String msg)
-	{
+
+	public void warning(String msg) {
 		logger.warning(msg);
+	}
+
+	public void fine(String msg) {
+		logger.fine(msg);
 	}
 }
