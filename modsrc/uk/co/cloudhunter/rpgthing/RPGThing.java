@@ -1,14 +1,15 @@
 package uk.co.cloudhunter.rpgthing;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -41,8 +42,12 @@ public class RPGThing {
 		private static HashMap<String, Class<?>> renderLayers = new HashMap<String, Class<?>>();
 
 		public static void registerGUI(String name, Class<?> clazz) {
-			getLog().fine(String.format("Host registering GUI: %s (%s)", name, clazz.getName()));
+			getLog().fine("Host registering GUI: %s (%s)", name, clazz.getName());
 			renderLayers.put(name, clazz);
+		}
+
+		public static Set<Entry<String, Class<?>>> getEntries() {
+			return renderLayers.entrySet();
 		}
 	}
 
