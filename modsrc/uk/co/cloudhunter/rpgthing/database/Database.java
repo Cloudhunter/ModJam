@@ -9,6 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+/**
+ * I REGRET NOTHING!
+ * 
+ * @author AfterLifeLochie
+ */
 public class Database {
 
 	private static final Class<?>[] packRules = { int.class, Integer.class, boolean.class, Boolean.class, double.class,
@@ -41,6 +46,8 @@ public class Database {
 		}
 
 		public void struct(int i, Class<?> val, String label) {
+			if (getPackRule(val) == -1)
+				throw new UnsupportedOperationException("Can't specify non-primitive field types, fail.");
 			this.struct.put(i, val);
 			this.labels.put(i, label);
 		}
@@ -51,7 +58,6 @@ public class Database {
 			if (vals.length != struct.size())
 				throw new UnsupportedOperationException("Wrong length, fail.");
 			for (int i = 0; i < vals.length; i++) {
-				// Allow null values, just in case
 				if (vals[i] != null && !vals[i].getClass().equals(struct.get(i)))
 					throw new UnsupportedOperationException("Field value at " + i + " not matching typeof "
 							+ struct.get(i).getName() + ", fail.");
@@ -153,6 +159,20 @@ public class Database {
 				}
 			}
 		}
+	}
+
+	private HashMap<String, Table> tables;
+
+	public Table create(String name) {
+		return tables.put(name, new Table());
+	}
+
+	public Table get(String name) {
+		return tables.get(name);
+	}
+
+	public int remove(String name) {
+		return (tables.remove(name) != null) ? 1 : 0;
 	}
 
 }
