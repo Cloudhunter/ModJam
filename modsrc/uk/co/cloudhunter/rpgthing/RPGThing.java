@@ -29,6 +29,10 @@ public class RPGThing {
 	public static LoggerRPG getLog() {
 		return log;
 	}
+	
+	public static String assetKey() {
+		return "rpgthing";
+	}
 
 	public static class Blocks {
 

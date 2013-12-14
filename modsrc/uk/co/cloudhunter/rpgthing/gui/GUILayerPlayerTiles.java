@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import uk.co.cloudhunter.rpgthing.RPGThing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -39,10 +40,17 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
+
+		theMinecraft.getTextureManager().bindTexture(
+				new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		emitQuad(8, 8, 0, 0, 1, 1, 24, 24, 1.0F);
+		GL11.glDisable(GL11.GL_BLEND);
+
 		
-		drawRect(8, 8, 128, 32, 0xFF000000);
-		drawRect(8, 8, 32, 32, 0xFFCCCCCC);
-		int len = theMinecraft.fontRenderer.drawStringWithShadow(theMinecraft.thePlayer.username, 34, 11, 0x00FFFFFF);
+		
+		theMinecraft.fontRenderer.drawStringWithShadow(theMinecraft.thePlayer.username, 36, 11, 0x00FFFFFF);
 		renderPlayer(theMinecraft.thePlayer, 20f, 16f, playerIconSize / 3);
 		renderPlayerBuffs(theMinecraft.thePlayer, 36, 22);
 	}
@@ -57,7 +65,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
 		GL11.glPopMatrix();
 		RenderHelper.disableStandardItemLighting();
-		
+
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -79,21 +87,21 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 					int index = potion.getStatusIconIndex();
 					int dx = x + (i % buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
 					int dy = y + (i / buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
-					drawBuff(dx, dy, (index % 8) * 18, 198 + (index / 8) * 18, 18 + (index % 8) * 18,
-							18 + 198 + (index / 8) * 18, buffIconSize, buffIconSize);
+					emitQuad(dx, dy, (index % 8) * 18, 198 + (index / 8) * 18, 18 + (index % 8) * 18,
+							18 + 198 + (index / 8) * 18, buffIconSize, buffIconSize, 0.00390625F);
 				}
 			}
 		}
 	}
 
-	public void drawBuff(double x, double y, double u, double v, double u2, double v2, double width, double height) {
-		double fact = 0.00390625F;
+	public void emitQuad(double x, double y, double u, double v, double u2, double v2, double width, double height,
+			double clamp) {
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x, y + height, this.zLevel, u * fact, v2 * fact);
-		tessellator.addVertexWithUV(x + height, y + height, this.zLevel, u2 * fact, v2 * fact);
-		tessellator.addVertexWithUV(x + height, y, this.zLevel, u2 * fact, v * fact);
-		tessellator.addVertexWithUV(x, y, this.zLevel, u * fact, v * fact);
+		tessellator.addVertexWithUV(x, y + height, this.zLevel, u * clamp, v2 * clamp);
+		tessellator.addVertexWithUV(x + height, y + height, this.zLevel, u2 * clamp, v2 * clamp);
+		tessellator.addVertexWithUV(x + height, y, this.zLevel, u2 * clamp, v * clamp);
+		tessellator.addVertexWithUV(x, y, this.zLevel, u * clamp, v * clamp);
 		tessellator.draw();
 	}
 
