@@ -89,10 +89,4 @@ public class RPGThing {
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
 	}
-
-	@ForgeSubscribe(priority = EventPriority.NORMAL)
-	public void render(RenderGameOverlayEvent event) {
-		proxy.render(event);
-	}
-
 }

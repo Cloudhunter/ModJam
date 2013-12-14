@@ -10,6 +10,8 @@ import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
 import uk.co.cloudhunter.rpgthing.network.ModPacket;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.EventPriority;
+import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -47,6 +49,7 @@ public class RPGClientProxy extends RPGCommonProxy {
 		}
 	}
 
+	@ForgeSubscribe(priority = EventPriority.NORMAL)
 	public void render(RenderGameOverlayEvent event) {
 		for (ILayerGUI g : layerGUI.values())
 			g.render(event);
