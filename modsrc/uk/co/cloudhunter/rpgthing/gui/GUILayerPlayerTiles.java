@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -21,52 +22,50 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
 public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 
-	private Minecraft theMinecraft;
+	private Minecraft mc;
 
 	private static final int playerIconSize = 24;
 	private static final int playerLabelTextSize = 9;
 
-	private static final int buffIconSize = 6;
-	private static final int buffIconMargin = 2;
+	private static final int buffIconSize = 9;
+	private static final int buffIconMargin = 1;
 
-	private static final int buffIconsPerRow = 4;
+	private static final int buffIconsPerRow = 5;
 
 	public GUILayerPlayerTiles() {
 		super();
-		theMinecraft = Minecraft.getMinecraft();
+		mc = Minecraft.getMinecraft();
 	}
 
 	@Override
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
-
-		theMinecraft.getTextureManager().bindTexture(
-				new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		emitQuad(9, 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
-		
-
-		String label = theMinecraft.thePlayer.username;
-		int dlen = theMinecraft.fontRenderer.getStringWidth(label);
-		theMinecraft.getTextureManager().bindTexture(
-				new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-label.png"));
-		emitQuad(22, 2, 0.1, 0.3, 0.3, 0.75, 12, 30, 1);
-		emitQuad(34, 2, 0.4, 0.3, 0.6, 0.75, (dlen * 2) - 34, 30, 1);
-		emitQuad(dlen * 2, 2, 0.7, 0.3, 0.9, 0.75, 12, 30, 1);
-		
-		theMinecraft.fontRenderer.drawStringWithShadow(theMinecraft.thePlayer.username, 36, 11, 0x00FFFFFF);
-		GL11.glDisable(GL11.GL_BLEND);
-		
-		renderPlayer(theMinecraft.thePlayer, 20f, 16f, playerIconSize / 3);
-		renderPlayerBuffs(theMinecraft.thePlayer, 36, 22);
+		EntityPlayer player = mc.theWorld.getPlayerEntityByName(mc.thePlayer.username);
+		for (int i = 0; i < 6; i++)
+			renderPlayer(player, 12f, 26f * i, playerIconSize / 3);
 	}
 
-	public void renderPlayer(EntityLivingBase entity, float x, float y, float scale) {
+	public void renderPlayer(EntityPlayer entity, float x, float y, float scale) {
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		String label = entity.username;
+		int dlen = mc.fontRenderer.getStringWidth(label) - 8;
+		if (entity.isDead || true)
+			GL11.glColor3d(1.0, 0.25, 0.25);
+		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-label.png"));
+		emitQuad(x + 12, y, 12, 13, 32, 51, 10, 32, 0.015625d);
+		emitQuad(x + 12 + 10, y, 26, 13, 36, 51, dlen, 32, 0.015625d);
+		emitQuad(x + 12 + 10 + dlen, y, 32, 13, 52, 51, 10, 32, 0.015625d);
+		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
+		emitQuad(x - 11, y + 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
+		GL11.glColor3d(1.0, 1.0, 1.0);
+		mc.fontRenderer.drawStringWithShadow(entity.username, (int) x + 18, (int) y + 12, 0x00FFFFFF);
+		GL11.glDisable(GL11.GL_BLEND);
+
 		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 		GL11.glPushMatrix();
-		GL11.glTranslatef(x, y, 50.0F);
+		GL11.glTranslatef(x, y + 15, 50.0F);
 		GL11.glScalef(-scale, scale, scale);
 		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 		RenderHelper.enableStandardItemLighting();
@@ -78,6 +77,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+
+		renderPlayerBuffs(entity, (int) x + 14, (int) y + 22);
 	}
 
 	public void renderPlayerBuffs(EntityLivingBase entity, int x, int y) {
@@ -89,8 +90,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				PotionEffect potioneffect = (PotionEffect) iterator.next();
 				Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				theMinecraft.getTextureManager().bindTexture(
-						new ResourceLocation("textures/gui/container/inventory.png"));
+				mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
 				if (potion.hasStatusIcon()) {
 					int index = potion.getStatusIconIndex();
 					int dx = x + (i % buffIconsPerRow) * (buffIconSize + 2 * buffIconMargin);
