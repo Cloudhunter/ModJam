@@ -10,8 +10,18 @@ public class Player {
 	private String playerName;
 	private Party playerParty;
 
-	public Player() {
-
+	public Player(String name) {
+		playerName = name;
+	}
+	
+	public void setParty(Party party)
+	{
+		playerParty = party;
+	}
+	
+	public Party getParty()
+	{
+		return playerParty;
 	}
 
 	public int getId() {
