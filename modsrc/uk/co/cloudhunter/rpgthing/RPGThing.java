@@ -26,10 +26,14 @@ public class RPGThing {
 		return RPGThing.instance;
 	}
 
+	public static RPGCommonProxy getProxy() {
+		return proxy;
+	}
+
 	public static LoggerRPG getLog() {
 		return log;
 	}
-	
+
 	public static String assetKey() {
 		return "rpgthing";
 	}
