@@ -34,6 +34,21 @@ public class Database {
 		return null;
 	}
 
+	public static class Row {
+		/**
+		 * Value dec
+		 */
+		private HashMap<Integer, Object> values;
+
+		public void put(int i, Object o) {
+			values.put(i, o);
+		}
+
+		public Object get(int i) {
+			return values.get(i);
+		}
+	}
+
 	public static class Table {
 
 		/**
@@ -47,7 +62,7 @@ public class Database {
 		/**
 		 * Value dec
 		 */
-		private HashMap<Integer, HashMap<Integer, Object>> values;
+		private HashMap<Integer, Row> values;
 		/**
 		 * Count field
 		 */
@@ -56,7 +71,7 @@ public class Database {
 		public Table() {
 			this.struct = new HashMap<Integer, Class<?>>();
 			this.labels = new HashMap<Integer, String>();
-			this.values = new HashMap<Integer, HashMap<Integer, Object>>();
+			this.values = new HashMap<Integer, Row>();
 			this.auto_inc = 0;
 		}
 
@@ -86,7 +101,7 @@ public class Database {
 		 */
 		public int put(Object[]... vals) {
 			int v = auto_inc++;
-			HashMap<Integer, Object> row = new HashMap<Integer, Object>();
+			Row row = new Row();
 			if (vals.length != struct.size())
 				throw new UnsupportedOperationException("Wrong length, fail.");
 			for (int i = 0; i < vals.length; i++) {
@@ -95,6 +110,7 @@ public class Database {
 							+ struct.get(i).getName() + ", fail.");
 				row.put(i, vals[i]);
 			}
+			values.put(v, row);
 			return v;
 		}
 
@@ -116,7 +132,7 @@ public class Database {
 		 *            The row number
 		 * @return The row, or nothing
 		 */
-		public HashMap<Integer, Object> get(int j) {
+		public Row get(int j) {
 			return values.get(j);
 		}
 
@@ -131,17 +147,17 @@ public class Database {
 		 *            Max value count to return
 		 * @return All matching rows
 		 */
-		public ArrayList<HashMap<Integer, Object>> match(int field_num, Object value, int cap) {
+		public ArrayList<Row> match(int field_num, Object value, int cap) {
 			if (struct.get(field_num) == null)
 				throw new UnsupportedOperationException("No such field, fail.");
 			if (!value.getClass().equals(struct.get(field_num)))
 				throw new UnsupportedOperationException("Search object " + value.getClass().getName()
 						+ " not matching typeof " + struct.get(field_num).getName() + ", fail.");
-			ArrayList<HashMap<Integer, Object>> results = new ArrayList<HashMap<Integer, Object>>();
+			ArrayList<Row> results = new ArrayList<Row>();
 			for (int i = 0; i < rows(); i++) {
 				if (results.size() > cap)
 					break;
-				HashMap<Integer, Object> row = get(i);
+				Row row = get(i);
 				if (row.get(field_num).equals(value))
 					results.add(row);
 			}
@@ -208,7 +224,7 @@ public class Database {
 			out.writeInt(rows());
 			out.writeInt(auto_inc);
 			for (int i = 0; i < rows(); i++) {
-				HashMap<Integer, Object> row = get(i);
+				Row row = get(i);
 				if (row != null) {
 					out.writeInt(i);
 					for (int j = 0; j < struct.size(); j++) {
@@ -264,7 +280,7 @@ public class Database {
 			int num_rows = in.readInt();
 			auto_inc = in.readInt();
 			for (int i = 0; i < num_rows; i++) {
-				HashMap<Integer, Object> row = new HashMap<Integer, Object>();
+				Row row = new Row();
 				int row_id = in.readInt();
 				for (int j = 0; j < struct.size(); j++) {
 					int typeof = in.readInt();
@@ -290,6 +306,7 @@ public class Database {
 							throw new UnsupportedOperationException("Strange primitive type, fail.");
 					}
 				}
+				values.put(row_id, row);
 			}
 		}
 	}
