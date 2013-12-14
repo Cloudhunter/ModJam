@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import uk.co.cloudhunter.rpgthing.RPGClientProxy;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -89,7 +90,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				.bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
 		if (entity == null)
 			emitQuad(x + 4, y + 24, 0f, 0.5f, 0.5f, 1f, 8, 8, 1.0f);
-		else if (true)
+		else if (RPGThing.getProxy().getCurrentParty() == null
+				|| RPGThing.getProxy().getCurrentParty().getOwner().isThisPlayer(entity))
 			emitQuad(x + 4, y + 24, 0.5f, 0, 1.0f, 0.5f, 8, 8, 1.0f);
 		else
 			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);

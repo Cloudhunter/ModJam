@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.gui.ILayerGUI;
 import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
 import uk.co.cloudhunter.rpgthing.network.ModPacket;
@@ -19,6 +20,7 @@ import cpw.mods.fml.common.network.Player;
 
 public class RPGClientProxy extends RPGCommonProxy {
 	private HashMap<String, ILayerGUI> layerGUI;
+	
 
 	public RPGClientProxy() {
 		super();

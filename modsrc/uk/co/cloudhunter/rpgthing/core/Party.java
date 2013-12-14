@@ -10,6 +10,7 @@ public class Party {
 	private Table partyTable;
 	private Row partyRow;
 	private ArrayList<Player> players;
+	private Player owner;
 
 	public Party() {
 
@@ -32,6 +33,10 @@ public class Party {
 
 	public Player[] getPlayers() {
 		return players.toArray(new Player[0]);
+	}
+	
+	public Player getOwner() {
+		return owner;
 	}
 
 	public int getId() {
