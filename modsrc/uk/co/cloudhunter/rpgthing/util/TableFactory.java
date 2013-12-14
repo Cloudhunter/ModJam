@@ -20,6 +20,7 @@ public class TableFactory {
 		tablePlayers.struct(2, Integer.class, "faction");
 		tablePlayers.struct(3, Integer.class, "level");
 		tablePlayers.struct(4, Double.class, "experience");
+		tablePlayers.struct(5, Integer.class, "party_id");
 
 		tableParties = db.create("parties");
 		tableParties.struct(0, Integer.class, "uid");

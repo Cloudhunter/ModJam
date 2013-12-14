@@ -56,6 +56,10 @@ public class Database {
 		public int id() {
 			return row_id;
 		}
+
+		public HashMap<Integer, Object> values() {
+			return values;
+		}
 	}
 
 	public static class Table {
