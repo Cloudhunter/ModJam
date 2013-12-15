@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import uk.co.cloudhunter.rpgthing.partyline.PartylineChatCommand;
 import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
 
 import net.minecraft.command.ServerCommandManager;
@@ -124,5 +125,6 @@ public class RPGThing {
 		MinecraftServer server = MinecraftServer.getServer();
 		ServerCommandManager manager = (ServerCommandManager) server.getCommandManager();
 		manager.registerCommand(new PartylineCommand());
+		manager.registerCommand(new PartylineChatCommand());
 	}
 }
