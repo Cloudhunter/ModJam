@@ -43,6 +43,7 @@ public class Database {
 
 		public Row(int id) {
 			this.row_id = id;
+			this.values = new HashMap<Integer, Object>();
 		}
 
 		public void put(int i, Object o) {
@@ -112,11 +113,12 @@ public class Database {
 		 *            All values
 		 * @return The row ID which was inserted
 		 */
-		public int put(Object[]... vals) {
+		public int put(Object[] vals) {
 			int v = auto_inc++;
 			Row row = new Row(v);
 			if (vals.length != struct.size())
-				throw new UnsupportedOperationException("Wrong length, fail.");
+				throw new UnsupportedOperationException("Wrong length, fail ( " + vals.length + " != " + struct.size()
+						+ ").");
 			for (int i = 0; i < vals.length; i++) {
 				if (vals[i] != null && !vals[i].getClass().equals(struct.get(i)))
 					throw new UnsupportedOperationException("Field value at " + i + " not matching typeof "
