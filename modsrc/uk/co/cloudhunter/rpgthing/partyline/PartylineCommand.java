@@ -28,7 +28,7 @@ public class PartylineCommand extends CommandBase {
         }
         else if ("help".equals(args[0]))
         {
-            throw new WrongUsageException("commands.forge.usage");
+            throw new WrongUsageException("commands.party.usage");
         }
         
         if (icommandsender instanceof EntityPlayerMP)
@@ -39,7 +39,21 @@ public class PartylineCommand extends CommandBase {
             	Party party = new Party(); // woo partay!
             	Player thePlayer = Player.getPlayer(player.username);
             	party.addPlayer(thePlayer);
-            	
+            }
+            else if ("invite".equals(args[0]))
+            {
+            	if (args.length <= 2)
+            	{
+            		throw new WrongUsageException("commands.party.usage");
+            	}
+            	Player thePlayer = Player.getPlayer(player.username);
+            	Party party = thePlayer.getParty();
+            	if (party == null)
+            	{
+            		party = new Party(); // WE GOT A PARTY IN HERE
+            		party.addPlayer(thePlayer);
+            	}
+            	party.addPlayer(Player.getPlayer(args[1]));
             }
         }
  
