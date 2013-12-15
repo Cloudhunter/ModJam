@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import uk.co.cloudhunter.rpgthing.RPGThing;
@@ -174,6 +175,15 @@ public class Party {
 			return true;
 		}
 		return false;
+	}
+
+	public void sendMessageToPlayers(ChatMessageComponent component) {
+		for (Player p: getPlayers())
+		{
+			EntityPlayer player = p.getMinecraftPlayer();
+			if (player != null)
+				player.sendChatToPlayer(component);
+		}
 	}
 
 }
