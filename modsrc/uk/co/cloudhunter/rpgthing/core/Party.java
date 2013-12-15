@@ -27,6 +27,8 @@ public class Party {
 	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
 
 	public boolean isClient;
+	
+	private boolean isModified;
 
 	public static Party getPartyById(int id, boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
@@ -48,6 +50,7 @@ public class Party {
 
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
+		isModified = true;
 	}
 
 	private Party(int id, boolean isClient) {
@@ -65,6 +68,8 @@ public class Party {
 
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
+		
+		isModified = true;
 	}
 
 	public void addPlayer(Player p) {
@@ -74,6 +79,7 @@ public class Party {
 			p.setParty(this);
 		}
 		commit();
+		isModified = true; 
 	}
 
 	public void removePlayer(Player p) {
@@ -81,6 +87,7 @@ public class Party {
 			players.remove(p);
 		}
 		commit();
+		isModified = true;
 	}
 
 	public Player[] getPlayers() {
@@ -89,6 +96,7 @@ public class Party {
 
 	public void setOwner(Player p) {
 		this.owner = p;
+		isModified = true;
 	}
 
 	public Player getOwner() {
@@ -101,6 +109,7 @@ public class Party {
 
 	public void disband() {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
+		isModified = true;
 	}
 
 	private void unpack() {
@@ -110,6 +119,7 @@ public class Party {
 			for (String str : members.split(","))
 				players.add(Player.getPlayer(str, isClient));
 		}
+		isModified = true;
 
 	}
 
@@ -155,6 +165,15 @@ public class Party {
 		for (Entry<Integer, String> person : persons.entrySet())
 			addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue(), true));
 		setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
+	}
+	
+	public boolean pollModified() {
+		if (isModified)
+		{
+			isModified = false;
+			return true;
+		}
+		return false;
 	}
 
 }
