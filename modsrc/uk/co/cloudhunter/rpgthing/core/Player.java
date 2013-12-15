@@ -3,6 +3,7 @@ package uk.co.cloudhunter.rpgthing.core;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -214,7 +215,16 @@ public class Player {
 
 	public void clearInvites()
 	{
-		// TODO Auto-generated method stub
+		Iterator it = partyInvites.values().iterator();
+		
+		while (it.hasNext())
+		{
+			((PartyInvite)it.next()).declineNoRemove();
+		}
+	}
+
+	public void removeInvite(String ownerName) {
+		partyInvites.remove(ownerName);
 		
 	}
 

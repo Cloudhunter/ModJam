@@ -1,5 +1,6 @@
 package uk.co.cloudhunter.rpgthing.partyline;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatMessageComponent;
 import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.core.Player;
@@ -22,16 +23,25 @@ public class PartyInvite
 		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("rpgthing.party.joined", thePlayer.getName()));
 		theParty.addPlayer(thePlayer);
 		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("rpgthing.party.selfjoin"));
+		thePlayer.removeInvite(ownerName);
 		thePlayer.clearInvites();
 	}
 	
 	public void decline()
 	{
-		
+		thePlayer.removeInvite(ownerName);
+		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.declined", ownerName));
+		declineNoRemove();
 	}
 	
-	public void getOwnerName()
+	public String getOwnerName()
 	{
-		
+		return ownerName;
+	}
+
+	public void declineNoRemove()
+	{
+		EntityPlayer player = theParty.getOwner().getMinecraftPlayer();
+		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.declineOwner",  thePlayer.getName()));
 	}
 }
