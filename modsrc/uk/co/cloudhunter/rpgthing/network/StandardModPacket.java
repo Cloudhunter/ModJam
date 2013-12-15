@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import uk.co.cloudhunter.rpgthing.RPGThing;
@@ -168,5 +170,29 @@ public class StandardModPacket extends ModPacket {
 		pkt.data = bytes.toByteArray();
 		pkt.length = pkt.data.length;
 		return pkt;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append("StandardModPacket -> ").append(mtos(values)).toString();
+	}
+
+	public String mtos(Map<?, ?> map) {
+		StringBuilder sb = new StringBuilder();
+		Iterator<?> iter = map.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<?, ?> entry = (Entry<?, ?>) iter.next();
+			sb.append(entry.getKey());
+			sb.append('=').append('"');
+			if (entry.getValue() instanceof HashMap)
+				mtos((HashMap<?, ?>) entry.getValue());
+			else
+				sb.append(entry.getValue());
+			sb.append('"');
+			if (iter.hasNext()) {
+				sb.append(',').append(' ');
+			}
+		}
+		return sb.toString();
 	}
 }
