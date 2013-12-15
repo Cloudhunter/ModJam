@@ -1,6 +1,8 @@
 package uk.co.cloudhunter.rpgthing.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
@@ -16,10 +18,16 @@ public class Player {
 	private Party playerParty;
 	private int playerLevel;
 	private double playerExperience;
+	
+	private static Map<String, Player> players = new HashMap<String, Player>();
+	
+	public static Player getPlayer(String username) {
+		return players.containsKey(username) ? players.get(username) : new Player(username);
+	}
 
-	public Player(String name) {
+	private Player(String name) {
 		playerName = name;
-
+		players.put(name, this);
 		Database db = RPGThing.getProxy().getDatabase();
 		Table playerTable = db.get("players");
 		try {

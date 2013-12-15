@@ -37,7 +37,8 @@ public class PartylineCommand extends CommandBase {
             if ("create".equals(args[0]))
             {
             	Party party = new Party(); // woo partay!
-            	party.addPlayer(new Player(player.username));
+            	Player thePlayer = Player.getPlayer(player.username);
+            	party.addPlayer(thePlayer);
             	
             }
         }
