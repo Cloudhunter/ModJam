@@ -15,7 +15,7 @@ import uk.co.cloudhunter.rpgthing.database.Database.Table;
 public class Party {
 
 	private Row partyRow;
-	private ArrayList<Player> players;
+	private ArrayList<Player> players = new ArrayList<Player>();
 	private Player owner;
 	@SideOnly(Side.CLIENT)
 	private static Map<Integer, Party> partiesClient = new HashMap<Integer, Party>();

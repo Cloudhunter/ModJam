@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
+
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -15,6 +19,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = "RPGThing", name = "RPGThing", version = "0.1")
@@ -111,5 +116,13 @@ public class RPGThing {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+	
+	@EventHandler
+	public void serverStart(FMLServerStartingEvent event) {
+		RPGThing.getLog().info("Server starting...");
+		MinecraftServer server = MinecraftServer.getServer();
+		ServerCommandManager manager = (ServerCommandManager) server.getCommandManager();
+		manager.registerCommand(new PartylineCommand());
 	}
 }

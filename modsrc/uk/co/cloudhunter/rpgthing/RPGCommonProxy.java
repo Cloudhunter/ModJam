@@ -102,12 +102,4 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	}
 
-	@EventHandler
-	public void serverStart(FMLServerStartingEvent event) {
-		RPGThing.getLog().info("Server starting...");
-		MinecraftServer server = MinecraftServer.getServer();
-		ServerCommandManager manager = (ServerCommandManager) server.getCommandManager();
-		manager.registerCommand(new PartylineCommand());
-	}
-
 }
