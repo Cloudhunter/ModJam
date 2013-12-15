@@ -9,8 +9,11 @@ import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
 import uk.co.cloudhunter.rpgthing.network.IRPGNetworkHandler;
 import uk.co.cloudhunter.rpgthing.network.ModPacket;
 import uk.co.cloudhunter.rpgthing.network.ServerPacketHandler;
+import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
 import uk.co.cloudhunter.rpgthing.partyline.PartylineNetworkHelper;
 import uk.co.cloudhunter.rpgthing.util.TableFactory;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
@@ -23,6 +26,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -96,6 +100,14 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	@EventHandler
 	private void onLivingDeathEvent(LivingDeathEvent event) {
 
+	}
+
+	@EventHandler
+	public void serverStart(FMLServerStartingEvent event) {
+		RPGThing.getLog().info("Server starting...");
+		MinecraftServer server = MinecraftServer.getServer();
+		ServerCommandManager manager = (ServerCommandManager) server.getCommandManager();
+		manager.registerCommand(new PartylineCommand());
 	}
 
 }
