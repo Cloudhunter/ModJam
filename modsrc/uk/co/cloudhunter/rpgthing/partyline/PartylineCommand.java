@@ -67,6 +67,8 @@ public class PartylineCommand extends CommandBase {
 			} else if ("invite".equals(args[0])) {
 				if (args.length <= 1)
 					throw new WrongUsageException("commands.party.usage");
+				if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args[1]) == null)
+					throw new CommandException("commands.party.notExist");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
 				if (party == null) {
