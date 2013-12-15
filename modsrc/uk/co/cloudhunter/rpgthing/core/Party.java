@@ -20,6 +20,7 @@ public class Party {
 		synchronized (players) {
 			if (!players.contains(p))
 				players.add(p);
+				p.setParty(this);
 		}
 		commit();
 	}
