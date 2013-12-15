@@ -46,10 +46,8 @@ public class PartylineChatCommand extends CommandBase {
 		
 		String chatStr = stringbuilder.toString().trim();
 		
-		ChatMessageComponent message = ChatMessageComponent.createFromTranslationWithSubstitutions("commands.message", new Object[] {icommandsender.getCommandSenderName(), chatStr}).setColor(EnumChatFormatting.LIGHT_PURPLE).setItalic(true);
-		
-		System.out.println(message);
-		
+		ChatMessageComponent message = ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {icommandsender.getCommandSenderName(), chatStr}).setColor(EnumChatFormatting.LIGHT_PURPLE).setItalic(true);
+
 		List<EntityPlayer> gamePlayers = MinecraftServer.getServer().getServerConfigurationManager(
 				MinecraftServer.getServer()).playerEntityList;
 		for (EntityPlayer player : gamePlayers)
