@@ -18,9 +18,9 @@ public class Player {
 	private Party playerParty;
 	private int playerLevel;
 	private double playerExperience;
-	
+
 	private static Map<String, Player> players = new HashMap<String, Player>();
-	
+
 	public static Player getPlayer(String username) {
 		return players.containsKey(username) ? players.get(username) : new Player(username);
 	}
@@ -33,9 +33,13 @@ public class Player {
 		try {
 			playerRow = playerTable.match(playerTable.map("name"), playerName, 1).get(0);
 		} catch (IndexOutOfBoundsException oob) {
-			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d });
+			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d, -1 });
 			playerRow = playerTable.get(r);
 		}
+	}
+
+	public String getName() {
+		return playerName;
 	}
 
 	public void setParty(Party party) {

@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL12;
 
 import uk.co.cloudhunter.rpgthing.RPGClientProxy;
 import uk.co.cloudhunter.rpgthing.RPGThing;
+import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.core.Player;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -45,9 +46,21 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
 		List<EntityPlayer> entities = mc.theWorld.playerEntities;
-
-		for (int i = 0; i < entities.size(); i++)
-			renderPlayer(entities.get(i), "Player", 12f, 26f + 26f * i, playerIconSize / 3);
+		renderPlayer(mc.thePlayer, mc.thePlayer.username, 12f, 0f, playerIconSize / 3);
+		Player p = Player.getPlayer(mc.thePlayer.username);
+		if (p.getParty() != null) {
+			Party party = p.getParty();
+			Player[] partyPlayers = party.getPlayers();
+			List<EntityPlayer> worldPlayers = mc.theWorld.playerEntities;
+			for (int i = 0; i < partyPlayers.length; i++) {
+				String playerName = partyPlayers[i].getName();
+				EntityPlayer ent = null;
+				for (EntityPlayer worldPlayer : worldPlayers)
+					if (worldPlayer.username.equals(playerName))
+						ent = worldPlayer;
+				renderPlayer(ent, playerName, 12f, 26f + 26f * i, playerIconSize / 3);
+			}
+		}
 	}
 
 	public void renderPlayer(EntityPlayer entity, String altName, float x, float y, float scale) {
