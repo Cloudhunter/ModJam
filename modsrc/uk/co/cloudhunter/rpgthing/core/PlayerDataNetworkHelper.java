@@ -12,7 +12,7 @@ public class PlayerDataNetworkHelper {
 			String req = (String) sp.getValue("payload");
 			if (req.equals("player-data")) {
 				String target = (String) sp.getValue("player-name");
-				uk.co.cloudhunter.rpgthing.core.Player p = uk.co.cloudhunter.rpgthing.core.Player.getPlayer(target);
+				uk.co.cloudhunter.rpgthing.core.Player p = uk.co.cloudhunter.rpgthing.core.Player.getPlayer(target, true);
 				p.readFromPacket(sp, "player-data");
 			}
 		}

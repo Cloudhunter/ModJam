@@ -30,19 +30,21 @@ public class PartylineCommand extends CommandBase {
 		if (icommandsender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) icommandsender;
 			if ("create".equals(args[0])) {
-				Party party = Party.newParty(); // woo partay!
-				Player thePlayer = Player.getPlayer(player.username);
+				Party party = Party.newParty(false); // woo partay!
+				Player thePlayer = Player.getPlayer(player.username, false);
 				party.addPlayer(thePlayer);
+				party.setOwner(thePlayer);
 			} else if ("invite".equals(args[0])) {
 				if (args.length <= 2)
 					throw new WrongUsageException("commands.party.usage");
-				Player thePlayer = Player.getPlayer(player.username);
+				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
 				if (party == null) {
-					party = Party.newParty(); // WE GOT A PARTY IN HERE
+					party = Party.newParty(false); // WE GOT A PARTY IN HERE
 					party.addPlayer(thePlayer);
+					party.setOwner(thePlayer);
 				}
-				party.addPlayer(Player.getPlayer(args[1]));
+				party.addPlayer(Player.getPlayer(args[1], false));
 			}
 		}
 

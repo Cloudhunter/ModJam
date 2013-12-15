@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
@@ -14,18 +17,25 @@ public class Party {
 	private Row partyRow;
 	private ArrayList<Player> players;
 	private Player owner;
-	private static Map<Integer, Party> parties = new HashMap<Integer, Party>();
+	@SideOnly(Side.CLIENT)
+	private static Map<Integer, Party> partiesClient = new HashMap<Integer, Party>();
 	
-	public static Party getPartyById(int id) {
-		return parties.containsKey(id) ? parties.get(id) : new Party(id);
+	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
+	
+	public boolean isClient;
+	
+	public static Party getPartyById(int id, boolean isClient) {
+		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
+		return parties.containsKey(id) ? parties.get(id) : new Party(id, isClient);
 	}
 	
-	public static Party newParty()
+	public static Party newParty(boolean isClient)
 	{
-		return new Party();
+		return new Party(isClient);
 	}
 
-	private Party() {
+	private Party(boolean isClient) {
+		this.isClient = isClient;
 		Database db = RPGThing.getProxy().getDatabase();
 		Table partyTable = db.get("parties");
 		int r = partyTable.put(new Object[] { partyTable.rows(), ""});
@@ -33,10 +43,12 @@ public class Party {
 		
 		unpack();
 		
+		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
 	}
 	
-	private Party(int id) {
+	private Party(int id, boolean isClient) {
+		this.isClient = isClient;
 		Database db = RPGThing.getProxy().getDatabase();
 		Table partyTable = db.get("parties");
 		try {
@@ -48,6 +60,7 @@ public class Party {
 		
 		unpack();
 		
+		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
 	}
 
@@ -93,7 +106,7 @@ public class Party {
 		{
 			players = new ArrayList<Player>();
 			for (String str: members.split(","))
-				players.add(Player.getPlayer(str));
+				players.add(Player.getPlayer(str, isClient));
 		}
 		
 	}

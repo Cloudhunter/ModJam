@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
@@ -19,15 +22,22 @@ public class Player {
 	private int playerLevel;
 	private double playerExperience;
 	private EnumFactions faction;
+	
+	public boolean isClient;
 
-	private static Map<String, Player> players = new HashMap<String, Player>();
+	@SideOnly(Side.CLIENT)
+	private static Map<String, Player> playersClient = new HashMap<String, Player>();
+	
+	private static Map<String, Player> playersServer = new HashMap<String, Player>();
 
-	public static Player getPlayer(String username) {
-		return players.containsKey(username) ? players.get(username) : new Player(username);
+	public static Player getPlayer(String username, boolean isClient) {
+		Map<String, Player> players = isClient ? playersClient : playersServer;
+		return players.containsKey(username) ? players.get(username) : new Player(username, isClient);
 	}
 
-	private Player(String name) {
+	private Player(String name, boolean isClient) {
 		playerName = name;
+		Map<String, Player> players = isClient ? playersClient : playersServer;
 		players.put(name, this);
 		Database db = RPGThing.getProxy().getDatabase();
 		Table playerTable = db.get("players");
@@ -38,6 +48,7 @@ public class Player {
 			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d, -1 });
 			playerRow = playerTable.get(r);
 		}
+		this.isClient = isClient;
 	}
 
 	public String getName() {
@@ -89,7 +100,7 @@ public class Player {
 		if (partyId == -1)
 			playerParty = null;
 		else
-			playerParty = Party.getPartyById(partyId);
+			playerParty = Party.getPartyById(partyId, isClient);
 	}
 
 	public int getId() {

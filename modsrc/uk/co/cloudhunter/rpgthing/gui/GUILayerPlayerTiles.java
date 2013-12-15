@@ -47,7 +47,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			return;
 		List<EntityPlayer> entities = mc.theWorld.playerEntities;
 		renderPlayer(mc.thePlayer, mc.thePlayer.username, 12f, 0f, playerIconSize / 3);
-		Player p = Player.getPlayer(mc.thePlayer.username);
+		Player p = Player.getPlayer(mc.thePlayer.username, true);
 		if (p.getParty() != null) {
 			Party party = p.getParty();
 			Player[] partyPlayers = party.getPlayers();
@@ -107,8 +107,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				.bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
 		if (entity == null)
 			emitQuad(x + 4, y + 24, 0f, 0.5f, 0.5f, 1f, 8, 8, 1.0f);
-		else if (Player.getPlayer(entity.username).getParty() == null
-				|| Player.getPlayer(entity.username).getParty().getOwner().isThisPlayer(entity))
+		else if (Player.getPlayer(entity.username, true).getParty() == null
+				|| Player.getPlayer(entity.username, true).getParty().getOwner().isThisPlayer(entity))
 			emitQuad(x + 4, y + 24, 0.5f, 0, 1.0f, 0.5f, 8, 8, 1.0f);
 		else
 			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
