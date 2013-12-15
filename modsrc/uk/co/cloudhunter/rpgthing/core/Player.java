@@ -22,10 +22,10 @@ public class Player {
 	private Party playerParty;
 	private int playerLevel;
 	private double playerExperience;
-	private EnumFactions faction;
+	private EnumFactions faction = EnumFactions.OVERWORLD;
 
 	public boolean isClient;
-	
+
 	public boolean isModified;
 
 	@SideOnly(Side.CLIENT)
@@ -132,15 +132,13 @@ public class Player {
 	public boolean isThisPlayer(EntityPlayer entity) {
 		return entity.username.equals(playerName);
 	}
-	
+
 	public boolean pollModified() {
-		if (isModified)
-		{
+		if (isModified) {
 			isModified = false;
 			return true;
 		}
 		return false;
 	}
-
 
 }
