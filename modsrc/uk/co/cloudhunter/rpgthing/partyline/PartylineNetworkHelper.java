@@ -24,6 +24,7 @@ public class PartylineNetworkHelper {
 				result.setIsForServer(false);
 				result.setType("partyline");
 				party.writeToPacket(result, "party-data");
+				result.setValue("party-target", target);
 				result.setValue("payload", "party-data");
 				RPGThing.getProxy().sendToPlayer((EntityPlayer) player, result);
 			}

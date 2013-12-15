@@ -52,8 +52,10 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			Party party = p.getParty();
 			Player[] partyPlayers = party.getPlayers();
 			List<EntityPlayer> worldPlayers = mc.theWorld.playerEntities;
-			for (int i = 0; i < partyPlayers.length; i++) {
+			for (int i = 0; i < partyPlayers.length; i++) {				
 				String playerName = partyPlayers[i].getName();
+				if (playerName.equals(mc.thePlayer.username))
+					continue;
 				EntityPlayer ent = null;
 				for (EntityPlayer worldPlayer : worldPlayers)
 					if (worldPlayer.username.equals(playerName))
@@ -108,7 +110,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		if (entity == null)
 			emitQuad(x + 4, y + 24, 0f, 0.5f, 0.5f, 1f, 8, 8, 1.0f);
 		else if (Player.getPlayer(entity.username, true).getParty() == null
-				|| Player.getPlayer(entity.username, true).getParty().getOwner().isThisPlayer(entity))
+				|| (Player.getPlayer(entity.username, true).getParty().getOwner() != null && Player
+						.getPlayer(entity.username, true).getParty().getOwner().isThisPlayer(entity)))
 			emitQuad(x + 4, y + 24, 0.5f, 0, 1.0f, 0.5f, 8, 8, 1.0f);
 		else
 			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
