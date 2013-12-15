@@ -67,4 +67,9 @@ public class BytePacket extends ModPacket {
 		return "bytepacket";
 	}
 
+	@Override
+	public String toString() {
+		return "bytepacket";
+	}
+
 }

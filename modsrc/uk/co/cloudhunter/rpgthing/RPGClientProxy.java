@@ -71,6 +71,7 @@ public class RPGClientProxy extends RPGCommonProxy {
 
 	@Override
 	public void sendToServer(ModPacket packet) {
+		RPGThing.getLog().info("Sending packet to server: " + packet.toString());
 		Packet250CustomPayload payload = packet.toPacket();
 		payload.channel = RPGThing.networkChannel();
 		FMLClientHandler.instance().sendPacket(payload);

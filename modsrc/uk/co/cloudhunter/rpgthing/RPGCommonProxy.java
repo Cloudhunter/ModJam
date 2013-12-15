@@ -77,6 +77,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	}
 
 	public void sendToAllPlayers(ModPacket packet) {
+		RPGThing.getLog().info("Sending packet to all: " + packet.toString());
 		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 		if (server != null) {
 			Packet250CustomPayload payload = packet.toPacket();
@@ -86,6 +87,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	}
 
 	public void sendToPlayer(EntityPlayer player, ModPacket packet) {
+		RPGThing.getLog().info("Sending packet to player: " + packet.toString());
 		Packet250CustomPayload payload = packet.toPacket();
 		payload.channel = RPGThing.networkChannel();
 		PacketDispatcher.sendPacketToPlayer(payload, (Player) player);

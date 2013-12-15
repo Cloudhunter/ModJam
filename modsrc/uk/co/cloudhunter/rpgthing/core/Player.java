@@ -3,12 +3,14 @@ package uk.co.cloudhunter.rpgthing.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
 import uk.co.cloudhunter.rpgthing.database.Database.Table;
+import uk.co.cloudhunter.rpgthing.network.StandardModPacket;
 
 public class Player {
 
@@ -79,6 +81,14 @@ public class Player {
 			playerRow.put(5, -1);
 		else
 			playerRow.put(5, playerParty.getId());
+
+		StandardModPacket packet = new StandardModPacket();
+		packet.setIsForServer(false);
+		packet.setType("player");
+		packet.setValue("payload", "player-data");
+		packet.setValue("player-name", playerName);
+		writeToPacket(packet, "player-data");
+		RPGThing.getProxy().sendToAllPlayers(packet);
 	}
 
 	private void unpack() {
@@ -90,6 +100,17 @@ public class Player {
 			playerParty = null;
 		else
 			playerParty = Party.getPartyById(partyId);
+	}
+
+	public void writeToPacket(StandardModPacket packet, String node) {
+		packet.setValue(node, playerRow.values());
+	}
+
+	public void readFromPacket(StandardModPacket packet, String node) {
+		HashMap<Integer, Object> vals = (HashMap<Integer, Object>) packet.getValue(node);
+		for (Entry<Integer, Object> val : vals.entrySet())
+			playerRow.put(val.getKey(), val.getValue());
+		unpack();
 	}
 
 	public int getId() {
