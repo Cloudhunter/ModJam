@@ -42,6 +42,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		mc = Minecraft.getMinecraft();
 	}
 
+	private long frameGlowCount = 0;
+
 	@Override
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
@@ -128,6 +130,20 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		else
 			emitQuad(x + 4, y + 24, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
 		emitQuad(x + 4, y + 9, 0f, 0f, 0.5f, 0.5f, 8, 8, 1.0f);
+
+		if (entity != null && entity.username.equals(mc.thePlayer.username)) {
+			Player p = Player.getPlayer(entity.username, true);
+			if (p.getUnspentSkillPoints() > 0) {
+				GL11.glPushMatrix();
+				double opacity = (1 + Math.sin(0.125 * frameGlowCount++)) / 2;
+				GL11.glColor4d(1.0d, 1.0d, 1.0d, opacity);
+				mc.getTextureManager().bindTexture(
+						new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crown-glow.png"));
+				emitQuad(x + 4, y + 9, 0f, 0f, 1f, 1f, 8, 8, 1.0f);
+				GL11.glPopMatrix();
+			}
+		}
+
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPushMatrix();
 		String lvl = " 1";

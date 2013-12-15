@@ -113,6 +113,10 @@ public class Player {
 		}
 	}
 
+	public int getUnspentSkillPoints() {
+		return playerUnspentSkillPoints;
+	}
+
 	private void commit() {
 		playerRow.put(2, faction.ordinal());
 		playerRow.put(3, playerLevel);
