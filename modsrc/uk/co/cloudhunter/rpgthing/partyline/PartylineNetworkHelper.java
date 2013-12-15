@@ -23,14 +23,7 @@ public class PartylineNetworkHelper {
 				StandardModPacket result = new StandardModPacket();
 				result.setIsForServer(false);
 				result.setType("partyline");
-				HashMap<String, Object> values = new HashMap<String, Object>();
-				HashMap<Integer, String> players = new HashMap<Integer, String>();
-				for (uk.co.cloudhunter.rpgthing.core.Player p : party.getPlayers())
-					players.put(players.size(), p.getName());
-				values.put("party-target", target);
-				values.put("players", players);
-				values.put("owner", party.getOwner().getName());
-				result.setValue("party-data", values);
+				party.writeToPacket(result, "party-data");
 				result.setValue("payload", "party-data");
 				RPGThing.getProxy().sendToPlayer((EntityPlayer) player, result);
 			}
@@ -41,14 +34,7 @@ public class PartylineNetworkHelper {
 			if (req.equals("party-data")) {
 				int target = (Integer) sp.getValue("party-target");
 				Party party = Party.getPartyById(target, true);
-
-				HashMap<String, Object> payload = (HashMap<String, Object>) sp.getValue("party-data");
-				HashMap<Integer, String> persons = (HashMap<Integer, String>) payload.get("players");
-				String owner = (String) payload.get("owner");
-
-				for (Entry<Integer, String> person : persons.entrySet())
-					party.addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue(), true));
-				party.setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
+				party.readFromPacket(sp, "party-data");
 			}
 
 			if (req.equals("join-party")) {

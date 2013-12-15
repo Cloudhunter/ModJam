@@ -24,12 +24,12 @@ public class Player {
 	private int playerLevel;
 	private double playerExperience;
 	private EnumFactions faction;
-	
+
 	public boolean isClient;
 
 	@SideOnly(Side.CLIENT)
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
-	
+
 	private static Map<String, Player> playersServer = new HashMap<String, Player>();
 
 	public static Player getPlayer(String username, boolean isClient) {
@@ -93,13 +93,15 @@ public class Player {
 		else
 			playerRow.put(5, playerParty.getId());
 
-		StandardModPacket packet = new StandardModPacket();
-		packet.setIsForServer(false);
-		packet.setType("player");
-		packet.setValue("payload", "player-data");
-		packet.setValue("player-name", playerName);
-		writeToPacket(packet, "player-data");
-		RPGThing.getProxy().sendToAllPlayers(packet);
+		if (!isClient) {
+			StandardModPacket packet = new StandardModPacket();
+			packet.setIsForServer(false);
+			packet.setType("player");
+			packet.setValue("payload", "player-data");
+			packet.setValue("player-name", playerName);
+			writeToPacket(packet, "player-data");
+			RPGThing.getProxy().sendToAllPlayers(packet);
+		}
 	}
 
 	private void unpack() {

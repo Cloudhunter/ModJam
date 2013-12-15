@@ -2,15 +2,19 @@ package uk.co.cloudhunter.rpgthing.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
 import uk.co.cloudhunter.rpgthing.database.Database.Table;
+import uk.co.cloudhunter.rpgthing.network.StandardModPacket;
 
 public class Party {
 
@@ -19,18 +23,17 @@ public class Party {
 	private Player owner;
 	@SideOnly(Side.CLIENT)
 	private static Map<Integer, Party> partiesClient = new HashMap<Integer, Party>();
-	
+
 	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
-	
+
 	public boolean isClient;
-	
+
 	public static Party getPartyById(int id, boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		return parties.containsKey(id) ? parties.get(id) : new Party(id, isClient);
 	}
-	
-	public static Party newParty(boolean isClient)
-	{
+
+	public static Party newParty(boolean isClient) {
 		return new Party(isClient);
 	}
 
@@ -38,15 +41,15 @@ public class Party {
 		this.isClient = isClient;
 		Database db = RPGThing.getProxy().getDatabase();
 		Table partyTable = db.get("parties");
-		int r = partyTable.put(new Object[] { partyTable.rows(), ""});
+		int r = partyTable.put(new Object[] { partyTable.rows(), "" });
 		partyRow = partyTable.get(r);
-		
+
 		unpack();
-		
+
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
 	}
-	
+
 	private Party(int id, boolean isClient) {
 		this.isClient = isClient;
 		Database db = RPGThing.getProxy().getDatabase();
@@ -57,9 +60,9 @@ public class Party {
 			int r = partyTable.put(new Object[] { id, "" });
 			partyRow = partyTable.get(r);
 		}
-		
+
 		unpack();
-		
+
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
 	}
@@ -99,16 +102,15 @@ public class Party {
 	public void disband() {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
 	}
-	
+
 	private void unpack() {
 		String members = (String) partyRow.get(1);
-		if (members != "")
-		{
+		if (members != "") {
 			players = new ArrayList<Player>();
-			for (String str: members.split(","))
+			for (String str : members.split(","))
 				players.add(Player.getPlayer(str, isClient));
 		}
-		
+
 	}
 
 	private void commit() {
@@ -118,6 +120,41 @@ public class Party {
 				members.append(p.getId()).append(",");
 		}
 		partyRow.put(1, members.toString());
+
+		if (!isClient) {
+			StandardModPacket result = new StandardModPacket();
+			result.setIsForServer(false);
+			result.setType("partyline");
+			writeToPacket(result, "party-data");
+			result.setValue("payload", "party-data");
+			List<EntityPlayer> players = MinecraftServer.getServer().getServerConfigurationManager(
+					MinecraftServer.getServer()).playerEntityList;
+			for (EntityPlayer player : players)
+				for (Player p : this.players)
+					if (p.getName().equals(player.username))
+						RPGThing.getProxy().sendToPlayer((EntityPlayer) player, result);
+
+		}
+	}
+
+	public void writeToPacket(StandardModPacket packet, String node) {
+		HashMap<String, Object> values = new HashMap<String, Object>();
+		HashMap<Integer, String> players = new HashMap<Integer, String>();
+		for (Player p : getPlayers())
+			players.put(players.size(), p.getName());
+		values.put("party-target", getId());
+		values.put("players", players);
+		values.put("owner", getOwner().getName());
+		packet.setValue(node, values);
+	}
+
+	public void readFromPacket(StandardModPacket packet, String node) {
+		HashMap<String, Object> payload = (HashMap<String, Object>) packet.getValue(node);
+		HashMap<Integer, String> persons = (HashMap<Integer, String>) payload.get("players");
+		String owner = (String) payload.get("owner");
+		for (Entry<Integer, String> person : persons.entrySet())
+			addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue(), true));
+		setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
 	}
 
 }
