@@ -21,6 +21,7 @@ public class TableFactory {
 		tablePlayers.struct(3, Integer.class, "level");
 		tablePlayers.struct(4, Double.class, "experience");
 		tablePlayers.struct(5, Integer.class, "party_id");
+		tablePlayers.struct(6, Integer.class, "unspent_points");
 
 		tableParties = db.create("parties");
 		tableParties.struct(0, Integer.class, "uid");
