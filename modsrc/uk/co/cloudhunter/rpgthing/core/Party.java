@@ -31,6 +31,8 @@ public class Party {
 		int r = partyTable.put(new Object[] { partyTable.rows(), ""});
 		partyRow = partyTable.get(r);
 		
+		unpack();
+		
 		parties.put(this.getId(), this);
 	}
 	
@@ -43,6 +45,8 @@ public class Party {
 			int r = partyTable.put(new Object[] { id, "" });
 			partyRow = partyTable.get(r);
 		}
+		
+		unpack();
 		
 		parties.put(this.getId(), this);
 	}
@@ -81,6 +85,17 @@ public class Party {
 
 	public void disband() {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
+	}
+	
+	private void unpack() {
+		String members = (String) partyRow.get(1);
+		if (members != "")
+		{
+			players = new ArrayList<Player>();
+			for (String str: members.split(","))
+				players.add(Player.getPlayer(str));
+		}
+		
 	}
 
 	private void commit() {
