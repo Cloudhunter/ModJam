@@ -69,6 +69,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 	}
 
 	public void renderPlayer(EntityPlayer entity, String altName, float x, float y, float scale) {
+		GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		String label = (entity != null) ? entity.username : altName;
@@ -81,6 +82,14 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		emitQuad(x + 12 + 10 + dlen, y, 32, 13, 52, 51, 10, 32, 0.015625d);
 		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
 		emitQuad(x - 11, y + 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
+
+		float health = (entity != null) ? Math.max(0, entity.getHealth()) : 0;
+		float damage = (entity != null) ? entity.getMaxHealth() - health : 1;
+		float pxPerHealth = (dlen + 12) / ((entity != null) ? entity.getMaxHealth() : 1);
+		drawRect((int) x + 16, (int) y + 13, (int) x + 16 + (int) (health * pxPerHealth), (int) y + 19, 0xFF00FF00);
+		drawRect((int) x + 12 + 16 + dlen - (int) (damage * pxPerHealth), (int) y + 13, (int) x + 12 + 16 + dlen,
+				(int) y + 19, 0xFFFF0000);
+
 		GL11.glColor3d(1.0, 1.0, 1.0);
 		mc.fontRenderer.drawStringWithShadow(label, (int) x + 18, (int) y + 12, 0x00FFFFFF);
 		GL11.glDisable(GL11.GL_BLEND);
