@@ -166,8 +166,7 @@ public class Player {
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public EntityPlayer getClientPlayer()
-	{
+	public EntityPlayer getClientPlayer() {
 		EntityPlayer player = weakClientPlayer.get();
 		if (player == null)
 		{
