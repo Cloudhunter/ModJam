@@ -12,6 +12,7 @@ import uk.co.cloudhunter.rpgthing.network.ServerPacketHandler;
 import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
 import uk.co.cloudhunter.rpgthing.partyline.PartylineNetworkHelper;
 import uk.co.cloudhunter.rpgthing.util.TableFactory;
+import uk.co.cloudhunter.rpgthing.util.TaskFactory;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +37,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	protected Database database;
 	protected TableFactory helperFactoryDatabase;
+	protected TaskFactory helperTaskFactory;
 
 	protected ClientPacketHandler clientNetwork;
 	protected ServerPacketHandler serverNetwork;
@@ -56,6 +58,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	public void preInit(FMLPreInitializationEvent event) {
 		this.helperFactoryDatabase = new TableFactory();
+		this.helperTaskFactory = new TaskFactory();
 	}
 
 	public void init(FMLInitializationEvent event) {
