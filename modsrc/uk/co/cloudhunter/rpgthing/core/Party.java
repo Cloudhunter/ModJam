@@ -21,9 +21,8 @@ public class Party {
 	private Row partyRow;
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private Player owner;
-	@SideOnly(Side.CLIENT)
+	
 	private static Map<Integer, Party> partiesClient = new HashMap<Integer, Party>();
-
 	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
 
 	public boolean isClient;
@@ -163,6 +162,7 @@ public class Party {
 
 	public boolean pollModified() {
 		if (isModified) {
+			RPGThing.getLog().info("Clearing dirty party flag.");
 			isModified = false;
 			return true;
 		}

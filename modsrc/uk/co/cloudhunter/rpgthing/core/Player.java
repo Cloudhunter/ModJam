@@ -28,9 +28,7 @@ public class Player {
 
 	public boolean isModified;
 
-	@SideOnly(Side.CLIENT)
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
-
 	private static Map<String, Player> playersServer = new HashMap<String, Player>();
 
 	public static Player getPlayer(String username, boolean isClient) {
@@ -135,6 +133,7 @@ public class Player {
 
 	public boolean pollModified() {
 		if (isModified) {
+			RPGThing.getLog().info("Clearing dirty player flag.");
 			isModified = false;
 			return true;
 		}
