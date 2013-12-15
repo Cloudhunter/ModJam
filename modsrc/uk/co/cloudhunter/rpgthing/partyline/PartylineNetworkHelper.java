@@ -22,6 +22,7 @@ public class PartylineNetworkHelper {
 				Party party = Party.getPartyById(target);
 				StandardModPacket result = new StandardModPacket();
 				result.setIsForServer(false);
+				result.setType("partyline");
 				HashMap<String, Object> values = new HashMap<String, Object>();
 				HashMap<Integer, String> players = new HashMap<Integer, String>();
 				for (uk.co.cloudhunter.rpgthing.core.Player p : party.getPlayers())
@@ -48,6 +49,19 @@ public class PartylineNetworkHelper {
 				for (Entry<Integer, String> person : persons.entrySet())
 					party.addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue()));
 				party.setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner));
+			}
+
+			if (req.equals("join-party")) {
+				int target = (Integer) sp.getValue("party-target");
+				Party party = Party.getPartyById(target);
+				uk.co.cloudhunter.rpgthing.core.Player.getPlayer(((EntityPlayer) player).username).setParty(party);
+
+				StandardModPacket updateReq = new StandardModPacket();
+				updateReq.setIsForServer(true);
+				updateReq.setType("partyline");
+				updateReq.setValue("request", "party-data");
+				updateReq.setValue("party-target", target);
+				RPGThing.getProxy().sendToServer(updateReq);
 			}
 		}
 
