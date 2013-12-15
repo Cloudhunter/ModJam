@@ -27,6 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -111,6 +112,14 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	@EventHandler
 	private void onLivingDeathEvent(LivingDeathEvent event) {
 
+	}
+	
+	// for future trading
+	@EventHandler
+	public void onEntityInteract(EntityInteractEvent event)
+	{
+		if (event.entity instanceof EntityPlayer)
+			RPGThing.getLog().info("%s interacted with %s!", event.entityPlayer.username, ((EntityPlayer)event.entity).username);
 	}
 
 	@ForgeSubscribe
