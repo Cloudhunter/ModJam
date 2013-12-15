@@ -37,7 +37,16 @@ public class PartylineCommand extends CommandBase {
 	@Override
     public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr)
     {
-        return par2ArrayOfStr.length == 1 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"survival", "creative", "adventure"}): (par2ArrayOfStr.length == 2 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames()) : null);
+		if (par2ArrayOfStr.length == 1)
+		{
+			return getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"help", "create", "invite", "eject", "disband", "leave"});
+		}
+		
+		if (par2ArrayOfStr.length == 2)
+			if (par2ArrayOfStr[0].equals("invite") || par2ArrayOfStr[0].equals("eject"))
+				return getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames());
+		
+		return null;
     }
 
 	@Override
