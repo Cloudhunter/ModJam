@@ -165,11 +165,11 @@ public class Party {
 		players.clear();
 		for (Entry<Integer, String> person : persons.entrySet()) {
 			RPGThing.getLog().info("Adding player: " + person.getValue());
-			addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue(), true));
+			addPlayer(Player.getPlayer(person.getValue(), true));
 		}
 
 		if (!owner.equals(""))
-			setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
+			setOwner(Player.getPlayer(owner, true));
 	}
 	
 	public boolean pollModified() {
