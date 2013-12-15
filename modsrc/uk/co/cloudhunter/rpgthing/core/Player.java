@@ -26,6 +26,8 @@ public class Player {
 	private EnumFactions faction;
 
 	public boolean isClient;
+	
+	public boolean isModified;
 
 	@SideOnly(Side.CLIENT)
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
@@ -59,6 +61,7 @@ public class Player {
 
 	public void setParty(Party party) {
 		playerParty = party;
+		isModified = true;
 		commit();
 	}
 
@@ -72,6 +75,7 @@ public class Player {
 
 	public void setLevel(int l) {
 		playerLevel = l;
+		isModified = true;
 		commit();
 	}
 
@@ -81,6 +85,7 @@ public class Player {
 
 	public void setExperience(double e) {
 		playerExperience = e;
+		isModified = true;
 		commit();
 	}
 
@@ -133,5 +138,15 @@ public class Player {
 	public boolean isThisPlayer(EntityPlayer entity) {
 		return entity.username.equals(playerName);
 	}
+	
+	public boolean pollModified() {
+		if (isModified)
+		{
+			isModified = false;
+			return true;
+		}
+		return false;
+	}
+
 
 }
