@@ -1,5 +1,6 @@
 package uk.co.cloudhunter.rpgthing.core;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +26,10 @@ public class Player {
 	private double playerExperience;
 	private int playerUnspentSkillPoints;
 	private EnumFactions faction = EnumFactions.OVERWORLD;
+	
+	private WeakReference<EntityPlayer> weakPlayer = new WeakReference(null);
 
 	public boolean isClient;
-
 	public boolean isModified;
 
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
@@ -157,6 +159,19 @@ public class Player {
 
 	public boolean isThisPlayer(EntityPlayer entity) {
 		return entity.username.equals(playerName);
+	}
+	
+	public EntityPlayer getMinecraftPlayer() {
+		if (weakPlayer != null)
+		{
+			EntityPlayer player = weakPlayer.get();
+			if (player != null)
+			{
+				return player;
+			}
+		} else {
+			
+		}
 	}
 
 	public boolean pollModified() {
