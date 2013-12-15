@@ -1,9 +1,17 @@
 package uk.co.cloudhunter.rpgthing.partyline;
 
+import java.util.List;
+
+import uk.co.cloudhunter.rpgthing.RPGThing;
+import uk.co.cloudhunter.rpgthing.core.Party;
+import uk.co.cloudhunter.rpgthing.core.Player;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 
 public class PartylineChatCommand extends CommandBase {
 
@@ -24,6 +32,10 @@ public class PartylineChatCommand extends CommandBase {
 		if (args.length == 0)
 			throw new WrongUsageException("command.partychat.usage");
 		
+		Party party = Player.getPlayer(((EntityPlayer) icommandsender).username, false).getParty();
+		if (party == null)
+			throw new WrongUsageException("command.partychat.noparty");
+		
 		StringBuilder stringbuilder = new StringBuilder();
 		for (String str : args)
 		{
@@ -32,7 +44,15 @@ public class PartylineChatCommand extends CommandBase {
 		}
 		
 		String chatStr = stringbuilder.toString().trim();
-		System.out.println(chatStr);
+		
+		
+		
+		List<EntityPlayer> gamePlayers = MinecraftServer.getServer().getServerConfigurationManager(
+				MinecraftServer.getServer()).playerEntityList;
+		for (EntityPlayer player : gamePlayers)
+			for (Player p : party.getPlayers())
+				if (p.getName().equals(player.username))
+					((EntityPlayerMP) player).sendChatToPlayer(ChatMessageComponent.createFromText("<" + ((EntityPlayer) icommandsender).username + ">" + chatStr));
 	}
 
 }
