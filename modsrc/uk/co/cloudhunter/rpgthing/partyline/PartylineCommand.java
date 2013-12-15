@@ -89,6 +89,8 @@ public class PartylineCommand extends CommandBase {
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.leave"));
 				
 			}
+			
+			throw new WrongUsageException("commands.party.usage");
 		}
 
 	}
