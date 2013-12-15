@@ -8,6 +8,7 @@ import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
 import uk.co.cloudhunter.rpgthing.network.IRPGNetworkHandler;
 import uk.co.cloudhunter.rpgthing.network.ModPacket;
 import uk.co.cloudhunter.rpgthing.network.ServerPacketHandler;
+import uk.co.cloudhunter.rpgthing.partyline.PartylineNetworkHelper;
 import uk.co.cloudhunter.rpgthing.util.TableFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
@@ -34,10 +35,12 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	protected ClientPacketHandler clientNetwork;
 	protected ServerPacketHandler serverNetwork;
 
+	public PartylineNetworkHelper partylineNetwork;
 
 	public RPGCommonProxy() {
 		this.database = new Database();
 		this.serverNetwork = new ServerPacketHandler();
+		this.partylineNetwork = new PartylineNetworkHelper();
 	}
 
 	public Database getDatabase() {
@@ -87,7 +90,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	@EventHandler
 	private void onLivingDeathEvent(LivingDeathEvent event) {
-		
+
 	}
 
 }

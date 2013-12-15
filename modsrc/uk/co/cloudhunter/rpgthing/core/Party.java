@@ -51,7 +51,7 @@ public class Party {
 		synchronized (players) {
 			if (!players.contains(p))
 				players.add(p);
-				p.setParty(this);
+			p.setParty(this);
 		}
 		commit();
 	}
@@ -66,7 +66,11 @@ public class Party {
 	public Player[] getPlayers() {
 		return players.toArray(new Player[0]);
 	}
-	
+
+	public void setOwner(Player p) {
+		this.owner = p;
+	}
+
 	public Player getOwner() {
 		return owner;
 	}

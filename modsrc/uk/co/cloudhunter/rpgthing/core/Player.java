@@ -18,6 +18,7 @@ public class Player {
 	private Party playerParty;
 	private int playerLevel;
 	private double playerExperience;
+	private EnumFactions faction;
 
 	private static Map<String, Player> players = new HashMap<String, Player>();
 
@@ -32,6 +33,7 @@ public class Player {
 		Table playerTable = db.get("players");
 		try {
 			playerRow = playerTable.match(playerTable.map("name"), playerName, 1).get(0);
+			unpack();
 		} catch (IndexOutOfBoundsException oob) {
 			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d, -1 });
 			playerRow = playerTable.get(r);
@@ -70,13 +72,24 @@ public class Player {
 	}
 
 	private void commit() {
-		// faction : playerRow.put(2, 0);
+		playerRow.put(2, faction.ordinal());
 		playerRow.put(3, playerLevel);
 		playerRow.put(4, playerExperience);
 		if (playerParty == null)
 			playerRow.put(5, -1);
 		else
 			playerRow.put(5, playerParty.getId());
+	}
+
+	private void unpack() {
+		faction = EnumFactions.fromOrdinal((Integer) playerRow.get(2));
+		playerLevel = (Integer) playerRow.get(3);
+		playerExperience = (Double) playerRow.get(4);
+		int partyId = (Integer) playerRow.get(5);
+		if (partyId == -1)
+			playerParty = null;
+		else
+			playerParty = Party.getPartyById(partyId);
 	}
 
 	public int getId() {
