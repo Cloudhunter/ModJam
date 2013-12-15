@@ -34,8 +34,6 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	protected ClientPacketHandler clientNetwork;
 	protected ServerPacketHandler serverNetwork;
 
-	protected Party currentParty;
-	protected Player currentPlayer;
 
 	public RPGCommonProxy() {
 		this.database = new Database();
@@ -44,14 +42,6 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	public Database getDatabase() {
 		return database;
-	}
-
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	public Party getCurrentParty() {
-		return currentParty;
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
