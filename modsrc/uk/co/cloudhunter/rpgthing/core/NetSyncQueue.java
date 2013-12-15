@@ -22,6 +22,9 @@ public class NetSyncQueue extends Thread implements ITickHandler {
 
 	public void put(ISyncTask task) {
 		synchronized (queue) {
+			for (ISyncTask t : queue)
+				if (t.uid().equals(task.uid()))
+					return;
 			queue.push(task);
 		}
 	}
