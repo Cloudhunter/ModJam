@@ -3,6 +3,7 @@ package uk.co.cloudhunter.rpgthing.partyline;
 import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.core.Player;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +49,7 @@ public class PartylineCommand extends CommandBase {
 					party.setOwner(thePlayer);
 				}
 				if (!thePlayer.equals(party.getOwner()))
-					throw new WrongUsageException("commands.party.notOwner");
+					throw new CommandException("commands.party.notOwner");
 				party.addPlayer(Player.getPlayer(args[1], false));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invite", new Object[] {args[1]}));
 			} else if ("eject".equals(args[0])) {
@@ -57,9 +58,9 @@ public class PartylineCommand extends CommandBase {
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
 				if (party == null)
-					throw new WrongUsageException("commands.party.none");
+					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
-					throw new WrongUsageException("commands.party.notOwner");
+					throw new CommandException("commands.party.notOwner");
 				party.removePlayer(Player.getPlayer(args[1], false));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.eject", new Object[] {args[1]}));
 			} else if ("disband".equals(args[0])) {
@@ -67,11 +68,20 @@ public class PartylineCommand extends CommandBase {
 				
 				Party party = thePlayer.getParty();
 				if (party == null)
-					throw new WrongUsageException("commands.party.none");
+					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
-					throw new WrongUsageException("commands.party.notOwner");
+					throw new CommandException("commands.party.notOwner");
 				party.disband();
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
+			} else if ("leave".equals(args[0])) {
+				Player thePlayer = Player.getPlayer(player.username, false);
+				Party party = thePlayer.getParty();
+				if (party == null)
+					throw new CommandException("commands.party.none");
+				party.removePlayer(thePlayer);
+				
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.leave"));
+				
 			}
 		}
 

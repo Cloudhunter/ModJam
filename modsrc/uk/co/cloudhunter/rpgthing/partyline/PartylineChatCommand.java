@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.EnumChatFormatting;
 
 public class PartylineChatCommand extends CommandBase {
 
@@ -45,14 +46,16 @@ public class PartylineChatCommand extends CommandBase {
 		
 		String chatStr = stringbuilder.toString().trim();
 		
+		ChatMessageComponent message = ChatMessageComponent.createFromTranslationWithSubstitutions("commands.message", new Object[] {icommandsender.getCommandSenderName(), chatStr}).setColor(EnumChatFormatting.LIGHT_PURPLE).setItalic(true);
 		
+		System.out.println(message);
 		
 		List<EntityPlayer> gamePlayers = MinecraftServer.getServer().getServerConfigurationManager(
 				MinecraftServer.getServer()).playerEntityList;
 		for (EntityPlayer player : gamePlayers)
 			for (Player p : party.getPlayers())
 				if (p.getName().equals(player.username))
-					((EntityPlayerMP) player).sendChatToPlayer(ChatMessageComponent.createFromText("<" + ((EntityPlayer) icommandsender).username + ">" + chatStr));
+					((EntityPlayerMP) player).sendChatToPlayer(message);
 	}
 
 }
