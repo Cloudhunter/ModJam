@@ -114,13 +114,13 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	public Collection getCachedPotionEffects(int id) {
 		return cachedPotionEffects.get(id);
 	}
-	
+
 	// for future trading
 	@EventHandler
-	public void onEntityInteract(EntityInteractEvent event)
-	{
+	public void onEntityInteract(EntityInteractEvent event) {
 		if (event.entity instanceof EntityPlayer)
-			RPGThing.getLog().info("%s interacted with %s!", event.entityPlayer.username, ((EntityPlayer)event.entity).username);
+			RPGThing.getLog().info("%s interacted with %s!", event.entityPlayer.username,
+					((EntityPlayer) event.entity).username);
 	}
 
 	public void onLivingEntityDeath(LivingDeathEvent event) {
@@ -133,6 +133,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 				int expValue = ((EntityMob) entity).experienceValue;
 				uk.co.cloudhunter.rpgthing.core.Player p = uk.co.cloudhunter.rpgthing.core.Player.getPlayer(
 						player.username, false);
+				p.addExperience(expValue);
 			}
 		}
 

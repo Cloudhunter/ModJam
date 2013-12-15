@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.StepSound;
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
@@ -77,6 +78,10 @@ public class Player {
 	}
 
 	public void setLevel(int l) {
+		if (l > playerLevel) {
+			int diff = l - playerLevel;
+			playerUnspentSkillPoints += diff;
+		}
 		playerLevel = l;
 		isModified = true;
 		commit();
@@ -95,13 +100,16 @@ public class Player {
 	public void addExperience(double quantity) {
 		double effectiveLevel = getLevel() + (0.01 * getExperience());
 		double factorExperienceEffectiveness = 0.5 + 1 / (0.125 * Math.pow(effectiveLevel, 2) + 2);
+		RPGThing.getLog().info("Adding" + (factorExperienceEffectiveness * quantity) + " XP");
 		setExperience(getExperience() + factorExperienceEffectiveness * quantity);
 		calculateLevels();
 	}
-	
+
 	private void calculateLevels() {
-		if (getExperience() >= 100.0d) {
-			
+		while (getExperience() >= 100.0d) {
+			double quantity = getExperience();
+			setExperience(quantity - 100.0d);
+			setLevel(getLevel() + 1);
 		}
 	}
 
