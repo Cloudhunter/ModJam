@@ -1,6 +1,9 @@
 package uk.co.cloudhunter.rpgthing;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.core.PlayerDataNetworkHelper;
@@ -15,12 +18,15 @@ import uk.co.cloudhunter.rpgthing.util.TableFactory;
 import uk.co.cloudhunter.rpgthing.util.TaskFactory;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -44,6 +50,8 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	public PartylineNetworkHelper partylineNetwork;
 	public PlayerDataNetworkHelper playerNetwork;
+
+	public Map<Integer, Collection> cachedPotionEffects = new HashMap<Integer, Collection>();
 
 	public RPGCommonProxy() {
 		this.database = new Database();
@@ -103,6 +111,16 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	@EventHandler
 	private void onLivingDeathEvent(LivingDeathEvent event) {
 
+	}
+
+	@ForgeSubscribe
+	public void livingEvent(LivingUpdateEvent evt) {
+		EntityLivingBase el = evt.entityLiving;
+		cachedPotionEffects.put(Integer.valueOf(el.entityId), el.getActivePotionEffects());
+	}
+
+	public Collection getCachedPotionEffects(int id) {
+		return cachedPotionEffects.get(id);
 	}
 
 }

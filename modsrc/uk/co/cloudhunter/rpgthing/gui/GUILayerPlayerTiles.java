@@ -1,5 +1,6 @@
 package uk.co.cloudhunter.rpgthing.gui;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,7 +53,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			Party party = p.getParty();
 			Player[] partyPlayers = party.getPlayers();
 			List<EntityPlayer> worldPlayers = mc.theWorld.playerEntities;
-			for (int i = 0; i < partyPlayers.length; i++) {				
+			int renderLayer = 1;
+			for (int i = 0; i < partyPlayers.length; i++) {
 				String playerName = partyPlayers[i].getName();
 				if (playerName.equals(mc.thePlayer.username))
 					continue;
@@ -60,7 +62,8 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				for (EntityPlayer worldPlayer : worldPlayers)
 					if (worldPlayer.username.equals(playerName))
 						ent = worldPlayer;
-				renderPlayer(ent, playerName, 12f, 26f + 26f * i, playerIconSize / 3);
+				renderPlayer(ent, playerName, 12f, 26f * renderLayer, playerIconSize / 3);
+				renderLayer++;
 			}
 		}
 	}
@@ -131,7 +134,10 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			GL11.glDisable(GL11.GL_LIGHTING);
 			int i = 0;
-			for (Iterator iterator = entity.getActivePotionEffects().iterator(); iterator.hasNext(); i++) {
+			Collection effects = RPGThing.getProxy().getCachedPotionEffects(entity.entityId);
+			if (effects == null)
+				return;
+			for (Iterator iterator = effects.iterator(); iterator.hasNext(); i++) {
 				PotionEffect potioneffect = (PotionEffect) iterator.next();
 				Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
