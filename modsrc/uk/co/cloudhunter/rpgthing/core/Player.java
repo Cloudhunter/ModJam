@@ -3,12 +3,15 @@ package uk.co.cloudhunter.rpgthing.core;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.StepSound;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
@@ -27,7 +30,8 @@ public class Player {
 	private int playerUnspentSkillPoints;
 	private EnumFactions faction = EnumFactions.OVERWORLD;
 	
-	private WeakReference<EntityPlayer> weakPlayer = new WeakReference(null);
+	private WeakReference<EntityPlayer> weakPlayer = new WeakReference<EntityPlayer>(null);
+	private WeakReference<EntityPlayer> weakClientPlayer = new WeakReference<EntityPlayer>(null);
 
 	public boolean isClient;
 	public boolean isModified;
@@ -161,17 +165,36 @@ public class Player {
 		return entity.username.equals(playerName);
 	}
 	
-	public EntityPlayer getMinecraftPlayer() {
-		if (weakPlayer != null)
+	@SideOnly(Side.CLIENT)
+	public EntityPlayer getClientPlayer()
+	{
+		EntityPlayer player = weakClientPlayer.get();
+		if (player == null)
 		{
-			EntityPlayer player = weakPlayer.get();
-			if (player != null)
-			{
-				return player;
-			}
-		} else {
+			List<EntityPlayer> worldPlayers = Minecraft.getMinecraft().theWorld.playerEntities;
 			
+			for (EntityPlayer worldPlayer : worldPlayers)
+				if (worldPlayer.username.equals(playerName))
+				{
+					player = worldPlayer;
+					break;
+				}
+			
+			weakClientPlayer = new WeakReference(player);
 		}
+		
+		return player;
+	}
+	
+	public EntityPlayer getMinecraftPlayer() {
+		EntityPlayer player = weakPlayer.get();
+		if (player == null)
+		{
+			player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(playerName);
+			weakPlayer = new WeakReference(player);
+		}
+		
+		return player;
 	}
 
 	public boolean pollModified() {
