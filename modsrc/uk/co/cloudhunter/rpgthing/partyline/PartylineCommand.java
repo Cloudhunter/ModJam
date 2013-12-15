@@ -58,6 +58,10 @@ public class PartylineCommand extends CommandBase {
 					throw new WrongUsageException("commands.party.none");
 				party.removePlayer(Player.getPlayer(args[1], false));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.eject", new Object[] {args[1]}));
+			} else if ("disband".equals(args[0])) {
+				Player thePlayer = Player.getPlayer(player.username, false);
+				thePlayer.getParty().disband();
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
 			}
 		}
 
