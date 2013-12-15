@@ -48,7 +48,6 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 	public void render(RenderGameOverlayEvent event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE)
 			return;
-		List<EntityPlayer> entities = mc.theWorld.playerEntities;
 		renderPlayer(mc.thePlayer, mc.thePlayer.username, 12f, 0f, playerIconSize / 3);
 		Player p = Player.getPlayer(mc.thePlayer.username, true);
 		if (p.getParty() != null) {
@@ -60,11 +59,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				String playerName = partyPlayers[i].getName();
 				if (playerName.equals(mc.thePlayer.username))
 					continue;
-				EntityPlayer ent = null;
-				for (EntityPlayer worldPlayer : worldPlayers)
-					if (worldPlayer.username.equals(playerName))
-						ent = worldPlayer;
-				renderPlayer(ent, playerName, 12f, 26f * renderLayer, playerIconSize / 3);
+				renderPlayer(partyPlayers[i].getClientPlayer(), playerName, 12f, 26f * renderLayer, playerIconSize / 3);
 				renderLayer++;
 			}
 		}

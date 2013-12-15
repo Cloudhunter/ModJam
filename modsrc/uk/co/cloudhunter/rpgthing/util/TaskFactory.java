@@ -29,12 +29,8 @@ public class TaskFactory {
 					party.writeToPacket(result, "party-data");
 					result.setValue("payload", "party-data");
 					result.setValue("party-target", party.getId());
-					List<EntityPlayer> gamePlayers = MinecraftServer.getServer().getServerConfigurationManager(
-							MinecraftServer.getServer()).playerEntityList;
-					for (EntityPlayer player : gamePlayers)
-						for (Player p : party.getPlayers())
-							if (p.getName().equals(player.username))
-								RPGThing.getProxy().sendToPlayer((EntityPlayer) player, result);
+					for (Player p : party.getPlayers())
+						RPGThing.getProxy().sendToPlayer(p.getMinecraftPlayer(), result);
 				}
 			}
 		}
