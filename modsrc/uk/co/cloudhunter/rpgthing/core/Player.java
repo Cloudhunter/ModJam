@@ -22,6 +22,7 @@ public class Player {
 	private Party playerParty;
 	private int playerLevel;
 	private double playerExperience;
+	private int playerUnspentSkillPoints;
 	private EnumFactions faction = EnumFactions.OVERWORLD;
 
 	public boolean isClient;
@@ -51,7 +52,7 @@ public class Player {
 			playerRow = playerTable.match(playerTable.map("name"), playerName, 1).get(0);
 			unpack();
 		} catch (IndexOutOfBoundsException oob) {
-			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d, -1 });
+			int r = playerTable.put(new Object[] { playerTable.rows(), playerName, 0, 1, 0.0d, -1, 0 });
 			playerRow = playerTable.get(r);
 		}
 		this.isClient = isClient;
@@ -91,6 +92,19 @@ public class Player {
 		commit();
 	}
 
+	public void addExperience(double quantity) {
+		double effectiveLevel = getLevel() + (0.01 * getExperience());
+		double factorExperienceEffectiveness = 0.5 + 1 / (0.125 * Math.pow(effectiveLevel, 2) + 2);
+		setExperience(getExperience() + factorExperienceEffectiveness * quantity);
+		calculateLevels();
+	}
+	
+	private void calculateLevels() {
+		if (getExperience() >= 100.0d) {
+			
+		}
+	}
+
 	private void commit() {
 		playerRow.put(2, faction.ordinal());
 		playerRow.put(3, playerLevel);
@@ -99,6 +113,7 @@ public class Player {
 			playerRow.put(5, -1);
 		else
 			playerRow.put(5, playerParty.getId());
+		playerRow.put(6, playerUnspentSkillPoints);
 	}
 
 	private void unpack() {
@@ -110,6 +125,7 @@ public class Player {
 			playerParty = null;
 		else
 			playerParty = Party.getPartyById(partyId, isClient);
+		playerUnspentSkillPoints = (Integer) playerRow.get(6);
 	}
 
 	public void writeToPacket(StandardModPacket packet, String node) {

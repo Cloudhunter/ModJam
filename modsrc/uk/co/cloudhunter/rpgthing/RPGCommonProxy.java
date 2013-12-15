@@ -18,7 +18,9 @@ import uk.co.cloudhunter.rpgthing.util.TableFactory;
 import uk.co.cloudhunter.rpgthing.util.TaskFactory;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
@@ -109,9 +111,8 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 		PacketDispatcher.sendPacketToPlayer(payload, (Player) player);
 	}
 
-	@EventHandler
-	private void onLivingDeathEvent(LivingDeathEvent event) {
-
+	public Collection getCachedPotionEffects(int id) {
+		return cachedPotionEffects.get(id);
 	}
 	
 	// for future trading
@@ -122,14 +123,24 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 			RPGThing.getLog().info("%s interacted with %s!", event.entityPlayer.username, ((EntityPlayer)event.entity).username);
 	}
 
-	@ForgeSubscribe
-	public void livingEvent(LivingUpdateEvent evt) {
-		EntityLivingBase el = evt.entityLiving;
-		cachedPotionEffects.put(Integer.valueOf(el.entityId), el.getActivePotionEffects());
+	public void onLivingEntityDeath(LivingDeathEvent event) {
+		Entity entity = event.entityLiving;
+		Entity actor = event.source.getEntity();
+
+		if (actor instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) actor;
+			if (entity instanceof EntityMob) {
+				int expValue = ((EntityMob) entity).experienceValue;
+				uk.co.cloudhunter.rpgthing.core.Player p = uk.co.cloudhunter.rpgthing.core.Player.getPlayer(
+						player.username, false);
+			}
+		}
+
 	}
 
-	public Collection getCachedPotionEffects(int id) {
-		return cachedPotionEffects.get(id);
+	public void onLivingUpdate(LivingUpdateEvent event) {
+		EntityLivingBase el = event.entityLiving;
+		cachedPotionEffects.put(Integer.valueOf(el.entityId), el.getActivePotionEffects());
 	}
 
 }

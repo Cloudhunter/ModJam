@@ -6,12 +6,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
-
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -83,11 +85,11 @@ public class RPGThing {
 		if (!serverTicks.contains(handler))
 			serverTicks.add(handler);
 	}
-	
+
 	public static ITickHandler[] getClientTickHandlers() {
 		return clientTicks.toArray(new ITickHandler[0]);
 	}
-	
+
 	public static ITickHandler[] getServerTickHandlers() {
 		return serverTicks.toArray(new ITickHandler[0]);
 	}
@@ -117,7 +119,17 @@ public class RPGThing {
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
 	}
-	
+
+	@EventHandler
+	private void onLivingDeathEvent(LivingDeathEvent event) {
+		proxy.onLivingEntityDeath(event);
+	}
+
+	@ForgeSubscribe
+	public void livingEvent(LivingUpdateEvent event) {
+		proxy.onLivingUpdate(event);
+	}
+
 	@EventHandler
 	public void serverStart(FMLServerStartingEvent event) {
 		RPGThing.getLog().info("Server starting...");
