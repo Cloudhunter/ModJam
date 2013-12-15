@@ -16,7 +16,7 @@ public class Party {
 	private Player owner;
 	private static Map<Integer, Party> parties = new HashMap<Integer, Party>();
 	
-	public static Party getPartyByID(int id) {
+	public static Party getPartyById(int id) {
 		return parties.containsKey(id) ? parties.get(id) : new Party(id);
 	}
 	
