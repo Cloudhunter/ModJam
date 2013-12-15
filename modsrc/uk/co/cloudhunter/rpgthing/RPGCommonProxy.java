@@ -3,6 +3,7 @@ package uk.co.cloudhunter.rpgthing;
 import java.util.ArrayList;
 
 import uk.co.cloudhunter.rpgthing.core.Party;
+import uk.co.cloudhunter.rpgthing.core.PlayerDataNetworkHelper;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
 import uk.co.cloudhunter.rpgthing.network.IRPGNetworkHandler;
@@ -36,11 +37,13 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	protected ServerPacketHandler serverNetwork;
 
 	public PartylineNetworkHelper partylineNetwork;
+	public PlayerDataNetworkHelper playerNetwork;
 
 	public RPGCommonProxy() {
 		this.database = new Database();
 		this.serverNetwork = new ServerPacketHandler();
 		this.partylineNetwork = new PartylineNetworkHelper();
+		this.playerNetwork = new PlayerDataNetworkHelper();
 	}
 
 	public Database getDatabase() {
