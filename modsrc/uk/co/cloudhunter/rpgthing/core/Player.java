@@ -18,6 +18,7 @@ import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
 import uk.co.cloudhunter.rpgthing.database.Database.Table;
 import uk.co.cloudhunter.rpgthing.network.StandardModPacket;
+import uk.co.cloudhunter.rpgthing.partyline.PartyInvite;
 
 public class Player {
 
@@ -32,6 +33,8 @@ public class Player {
 	
 	private WeakReference<EntityPlayer> weakPlayer = new WeakReference<EntityPlayer>(null);
 	private WeakReference<EntityPlayer> weakClientPlayer = new WeakReference<EntityPlayer>(null);
+	
+	private Map <String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
 
 	public boolean isClient;
 	public boolean isModified;
@@ -73,6 +76,10 @@ public class Player {
 		playerParty = party;
 		isModified = true;
 		commit();
+	}
+	
+	public void inviteToParty(Party party) {
+		partyInvites.put(party.getOwner().getName(), new PartyInvite(party, this));
 	}
 
 	public Party getParty() {
@@ -203,6 +210,12 @@ public class Player {
 			return true;
 		}
 		return false;
+	}
+
+	public void clearInvites()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
