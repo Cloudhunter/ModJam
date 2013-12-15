@@ -2,6 +2,7 @@ package uk.co.cloudhunter.rpgthing.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +29,7 @@ public class Party {
 	public boolean isClient;
 
 	private boolean isModified;
+	private boolean isDisbanded;
 
 	public static Party getPartyById(int id, boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
@@ -89,6 +91,7 @@ public class Party {
 	public void removePlayer(Player p) {
 		synchronized (players) {
 			players.remove(p);
+			p.setParty(null);
 		}
 		commit();
 		isModified = true;
@@ -113,7 +116,11 @@ public class Party {
 
 	public void disband() {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
+		Iterator it = players.iterator();
+		while (it.hasNext())
+			removePlayer((Player)it.next());
 		isModified = true;
+		isDisbanded = true;
 	}
 
 	private void unpack() {

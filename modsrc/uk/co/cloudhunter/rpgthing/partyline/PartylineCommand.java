@@ -47,6 +47,8 @@ public class PartylineCommand extends CommandBase {
 					party.addPlayer(thePlayer);
 					party.setOwner(thePlayer);
 				}
+				if (!thePlayer.equals(party.getOwner()))
+					throw new WrongUsageException("commands.party.notOwner");
 				party.addPlayer(Player.getPlayer(args[1], false));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invite", new Object[] {args[1]}));
 			} else if ("eject".equals(args[0])) {
@@ -56,11 +58,19 @@ public class PartylineCommand extends CommandBase {
 				Party party = thePlayer.getParty();
 				if (party == null)
 					throw new WrongUsageException("commands.party.none");
+				if (!thePlayer.equals(party.getOwner()))
+					throw new WrongUsageException("commands.party.notOwner");
 				party.removePlayer(Player.getPlayer(args[1], false));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.eject", new Object[] {args[1]}));
 			} else if ("disband".equals(args[0])) {
 				Player thePlayer = Player.getPlayer(player.username, false);
-				thePlayer.getParty().disband();
+				
+				Party party = thePlayer.getParty();
+				if (party == null)
+					throw new WrongUsageException("commands.party.none");
+				if (!thePlayer.equals(party.getOwner()))
+					throw new WrongUsageException("commands.party.notOwner");
+				party.disband();
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
 			}
 		}
