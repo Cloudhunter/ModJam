@@ -1,5 +1,9 @@
 package uk.co.cloudhunter.rpgthing.partyline;
 
+import java.util.List;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import uk.co.cloudhunter.rpgthing.core.Party;
 import uk.co.cloudhunter.rpgthing.core.Player;
 import net.minecraft.command.CommandBase;
@@ -8,6 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -27,6 +32,12 @@ public class PartylineCommand extends CommandBase {
     public int getRequiredPermissionLevel()
     {
         return 0;
+    }
+	
+	@Override
+    public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr)
+    {
+        return par2ArrayOfStr.length == 1 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"survival", "creative", "adventure"}): (par2ArrayOfStr.length == 2 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames()) : null);
     }
 
 	@Override
