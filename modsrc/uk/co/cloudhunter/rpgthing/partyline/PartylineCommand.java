@@ -7,6 +7,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.EnumChatFormatting;
 
 public class PartylineCommand extends CommandBase {
 
@@ -34,8 +36,9 @@ public class PartylineCommand extends CommandBase {
 				Player thePlayer = Player.getPlayer(player.username, false);
 				party.addPlayer(thePlayer);
 				party.setOwner(thePlayer);
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.create"));
 			} else if ("invite".equals(args[0])) {
-				if (args.length <= 2)
+				if (args.length <= 1)
 					throw new WrongUsageException("commands.party.usage");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
@@ -45,6 +48,16 @@ public class PartylineCommand extends CommandBase {
 					party.setOwner(thePlayer);
 				}
 				party.addPlayer(Player.getPlayer(args[1], false));
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invite", new Object[] {args[1]}));
+			} else if ("eject".equals(args[0])) {
+				if (args.length <= 1)
+					throw new WrongUsageException("commands.party.usage");
+				Player thePlayer = Player.getPlayer(player.username, false);
+				Party party = thePlayer.getParty();
+				if (party == null)
+					throw new WrongUsageException("commands.party.none");
+				party.removePlayer(Player.getPlayer(args[1], false));
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.eject", new Object[] {args[1]}));
 			}
 		}
 
