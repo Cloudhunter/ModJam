@@ -116,13 +116,14 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 	}
 
 	// for future trading
-	@EventHandler
+	@ForgeSubscribe
 	public void onEntityInteract(EntityInteractEvent event) {
-		if (event.entity instanceof EntityPlayer)
+		if (event.target instanceof EntityPlayer)
 			RPGThing.getLog().info("%s interacted with %s!", event.entityPlayer.username,
-					((EntityPlayer) event.entity).username);
+					((EntityPlayer) event.target).username);
 	}
 
+	@ForgeSubscribe
 	public void onLivingEntityDeath(LivingDeathEvent event) {
 		Entity entity = event.entityLiving;
 		Entity actor = event.source.getEntity();
@@ -139,6 +140,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 
 	}
 
+	@ForgeSubscribe
 	public void onLivingUpdate(LivingUpdateEvent event) {
 		EntityLivingBase el = event.entityLiving;
 		cachedPotionEffects.put(Integer.valueOf(el.entityId), el.getActivePotionEffects());

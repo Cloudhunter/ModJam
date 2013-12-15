@@ -122,16 +122,6 @@ public class RPGThing {
 	}
 
 	@EventHandler
-	private void onLivingDeathEvent(LivingDeathEvent event) {
-		proxy.onLivingEntityDeath(event);
-	}
-
-	@ForgeSubscribe
-	public void livingEvent(LivingUpdateEvent event) {
-		proxy.onLivingUpdate(event);
-	}
-
-	@EventHandler
 	public void serverStart(FMLServerStartingEvent event) {
 		RPGThing.getLog().info("Server starting...");
 		MinecraftServer server = MinecraftServer.getServer();

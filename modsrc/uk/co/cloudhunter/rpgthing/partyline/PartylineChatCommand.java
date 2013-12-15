@@ -20,6 +20,12 @@ public class PartylineChatCommand extends CommandBase {
 	public String getCommandName() {
 		return "pc";
 	}
+	
+	@Override
+    public int getRequiredPermissionLevel()
+    {
+        return 0;
+    }
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
