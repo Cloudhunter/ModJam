@@ -10,7 +10,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 
 public abstract class ModPacket {
 	protected static final Class<?>[] classReferences = { int.class, Integer.class, boolean.class, Boolean.class,
-			double.class, Double.class, float.class, Float.class, String.class };
+			double.class, Double.class, float.class, Float.class, String.class, HashMap.class };
 
 	protected static int getGenericID(Class<?> clazz) {
 		for (int i = 0; i < classReferences.length; i++)

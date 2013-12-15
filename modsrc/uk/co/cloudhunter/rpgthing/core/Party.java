@@ -137,6 +137,7 @@ public class Party {
 			result.setType("partyline");
 			writeToPacket(result, "party-data");
 			result.setValue("payload", "party-data");
+			result.setValue("party-target", getId());
 			List<EntityPlayer> players = MinecraftServer.getServer().getServerConfigurationManager(
 					MinecraftServer.getServer()).playerEntityList;
 			for (EntityPlayer player : players)
@@ -152,9 +153,8 @@ public class Party {
 		HashMap<Integer, String> players = new HashMap<Integer, String>();
 		for (Player p : getPlayers())
 			players.put(players.size(), p.getName());
-		values.put("party-target", getId());
 		values.put("players", players);
-		values.put("owner", getOwner().getName());
+		values.put("owner", (getOwner() != null) ? getOwner().getName() : "");
 		packet.setValue(node, values);
 	}
 
@@ -162,9 +162,14 @@ public class Party {
 		HashMap<String, Object> payload = (HashMap<String, Object>) packet.getValue(node);
 		HashMap<Integer, String> persons = (HashMap<Integer, String>) payload.get("players");
 		String owner = (String) payload.get("owner");
-		for (Entry<Integer, String> person : persons.entrySet())
+		players.clear();
+		for (Entry<Integer, String> person : persons.entrySet()) {
+			RPGThing.getLog().info("Adding player: " + person.getValue());
 			addPlayer(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(person.getValue(), true));
-		setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
+		}
+		
+		if (!owner.equals(""))
+			setOwner(uk.co.cloudhunter.rpgthing.core.Player.getPlayer(owner, true));
 	}
 	
 	public boolean pollModified() {

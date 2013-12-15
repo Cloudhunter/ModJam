@@ -82,7 +82,7 @@ public class StandardModPacket extends ModPacket {
 	public static void writeValue(Object o, DataOutputStream data) throws IOException {
 		int intValueOf = ModPacket.getGenericID(o.getClass());
 		if (intValueOf == -1)
-			throw new IOException("Weird value!");
+			throw new IOException("Weird value, cannot pack " + o.getClass().getName());
 		else {
 			data.writeInt(intValueOf);
 			switch (intValueOf) {
@@ -179,13 +179,14 @@ public class StandardModPacket extends ModPacket {
 
 	public String mtos(Map<?, ?> map) {
 		StringBuilder sb = new StringBuilder();
+		sb.append(" { ");
 		Iterator<?> iter = map.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<?, ?> entry = (Entry<?, ?>) iter.next();
 			sb.append(entry.getKey());
 			sb.append('=').append('"');
 			if (entry.getValue() instanceof HashMap)
-				mtos((HashMap<?, ?>) entry.getValue());
+				sb.append(mtos((HashMap<?, ?>) entry.getValue()));
 			else
 				sb.append(entry.getValue());
 			sb.append('"');
@@ -193,6 +194,7 @@ public class StandardModPacket extends ModPacket {
 				sb.append(',').append(' ');
 			}
 		}
+		sb.append(" } ");
 		return sb.toString();
 	}
 }
