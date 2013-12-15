@@ -27,12 +27,17 @@ public class Party {
 	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
 
 	public boolean isClient;
-	
+
 	private boolean isModified;
 
 	public static Party getPartyById(int id, boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		return parties.containsKey(id) ? parties.get(id) : new Party(id, isClient);
+	}
+
+	public static Party[] getAllParties(boolean isClient) {
+		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
+		return parties.values().toArray(new Party[0]);
 	}
 
 	public static Party newParty(boolean isClient) {
@@ -68,7 +73,7 @@ public class Party {
 
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
 		parties.put(this.getId(), this);
-		
+
 		isModified = true;
 	}
 
@@ -79,7 +84,7 @@ public class Party {
 			p.setParty(this);
 		}
 		commit();
-		isModified = true; 
+		isModified = true;
 	}
 
 	public void removePlayer(Player p) {
@@ -130,22 +135,6 @@ public class Party {
 				members.append(p.getId()).append(",");
 		}
 		partyRow.put(1, members.toString());
-
-		if (!isClient) {
-			StandardModPacket result = new StandardModPacket();
-			result.setIsForServer(false);
-			result.setType("partyline");
-			writeToPacket(result, "party-data");
-			result.setValue("payload", "party-data");
-			result.setValue("party-target", getId());
-			List<EntityPlayer> players = MinecraftServer.getServer().getServerConfigurationManager(
-					MinecraftServer.getServer()).playerEntityList;
-			for (EntityPlayer player : players)
-				for (Player p : this.players)
-					if (p.getName().equals(player.username))
-						RPGThing.getProxy().sendToPlayer((EntityPlayer) player, result);
-
-		}
 	}
 
 	public void writeToPacket(StandardModPacket packet, String node) {
@@ -171,10 +160,9 @@ public class Party {
 		if (!owner.equals(""))
 			setOwner(Player.getPlayer(owner, true));
 	}
-	
+
 	public boolean pollModified() {
-		if (isModified)
-		{
+		if (isModified) {
 			isModified = false;
 			return true;
 		}

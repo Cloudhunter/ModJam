@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.entity.player.EntityPlayer;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
@@ -37,6 +36,11 @@ public class Player {
 	public static Player getPlayer(String username, boolean isClient) {
 		Map<String, Player> players = isClient ? playersClient : playersServer;
 		return players.containsKey(username) ? players.get(username) : new Player(username, isClient);
+	}
+
+	public static Player[] getAllPlayers(boolean isClient) {
+		Map<String, Player> players = isClient ? playersClient : playersServer;
+		return players.values().toArray(new Player[0]);
 	}
 
 	private Player(String name, boolean isClient) {
@@ -97,16 +101,6 @@ public class Player {
 			playerRow.put(5, -1);
 		else
 			playerRow.put(5, playerParty.getId());
-
-		if (!isClient) {
-			StandardModPacket packet = new StandardModPacket();
-			packet.setIsForServer(false);
-			packet.setType("player");
-			packet.setValue("payload", "player-data");
-			packet.setValue("player-name", playerName);
-			writeToPacket(packet, "player-data");
-			RPGThing.getProxy().sendToAllPlayers(packet);
-		}
 	}
 
 	private void unpack() {
