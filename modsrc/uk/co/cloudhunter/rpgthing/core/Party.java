@@ -1,19 +1,50 @@
 package uk.co.cloudhunter.rpgthing.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import uk.co.cloudhunter.rpgthing.RPGThing;
+import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
 import uk.co.cloudhunter.rpgthing.database.Database.Table;
 
 public class Party {
 
-	private Table partyTable;
 	private Row partyRow;
 	private ArrayList<Player> players;
 	private Player owner;
+	private static Map<Integer, Party> parties = new HashMap<Integer, Party>();
+	
+	public static Party getPartyByID(int id) {
+		return parties.containsKey(id) ? parties.get(id) : new Party(id);
+	}
+	
+	public static Party newParty()
+	{
+		return new Party();
+	}
 
-	public Party() {
-
+	private Party() {
+		Database db = RPGThing.getProxy().getDatabase();
+		Table partyTable = db.get("parties");
+		int r = partyTable.put(new Object[] { partyTable.rows(), ""});
+		partyRow = partyTable.get(r);
+		
+		parties.put(this.getId(), this);
+	}
+	
+	private Party(int id) {
+		Database db = RPGThing.getProxy().getDatabase();
+		Table partyTable = db.get("parties");
+		try {
+			partyRow = partyTable.match(partyTable.map("uid"), id, 1).get(0);
+		} catch (IndexOutOfBoundsException exc) {
+			int r = partyTable.put(new Object[] { id, "" });
+			partyRow = partyTable.get(r);
+		}
+		
+		parties.put(this.getId(), this);
 	}
 
 	public void addPlayer(Player p) {
@@ -45,7 +76,7 @@ public class Party {
 	}
 
 	public void disband() {
-		partyTable.remove(partyRow.id());
+		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
 	}
 
 	private void commit() {

@@ -36,7 +36,7 @@ public class PartylineCommand extends CommandBase {
         	EntityPlayerMP player = (EntityPlayerMP) icommandsender;
             if ("create".equals(args[0]))
             {
-            	Party party = new Party(); // woo partay!
+            	Party party = Party.newParty(); // woo partay!
             	Player thePlayer = Player.getPlayer(player.username);
             	party.addPlayer(thePlayer);
             }
@@ -50,7 +50,7 @@ public class PartylineCommand extends CommandBase {
             	Party party = thePlayer.getParty();
             	if (party == null)
             	{
-            		party = new Party(); // WE GOT A PARTY IN HERE
+            		party = Party.newParty(); // WE GOT A PARTY IN HERE
             		party.addPlayer(thePlayer);
             	}
             	party.addPlayer(Player.getPlayer(args[1]));
