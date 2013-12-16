@@ -79,13 +79,20 @@ public class GUILayerMipmap extends Gui implements ILayerGUI {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		double cx = res.getScaledWidth_double();
-		double cy = res.getScaledHeight_double();
+		double cx = res.getScaledWidth_double() / 2.0d;
+		double cy = res.getScaledHeight_double() / 2.0d;
 
 		Vec3 thatV = entity.getPosition(1.0f);
 		Vec3 thisV = mc.thePlayer.getPosition(1.0f);
 		Vec3 product = thisV.subtract(thatV);
 		double inflect = Math.atan2(product.zCoord, product.xCoord);
+		double localInflect = mc.thePlayer.cameraYaw;
+		double productInflect = inflect - localInflect;
+
+		double rad = 30.0d;
+		double ddx = rad * Math.cos(productInflect) + cx;
+		double ddy = rad * Math.sin(productInflect) + cy;
+		drawRect((int) ddx - 8, (int) ddy - 8, (int) ddx + 8, (int) ddy + 8, 0xFF000000);
 
 		GL11.glDisable(GL11.GL_BLEND);
 	}
