@@ -41,6 +41,8 @@ public class Player {
 	public boolean isClient;
 	public boolean isModified;
 
+	public boolean hasDisconnected = false;
+
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
 	private static Map<String, Player> playersServer = new HashMap<String, Player>();
 
@@ -228,7 +230,11 @@ public class Player {
 
 	public void removeInvite(String ownerName) {
 		partyInvites.remove(ownerName);
-		
+	}
+	
+	public boolean isDisconnected()
+	{
+		return hasDisconnected;
 	}
 
 }

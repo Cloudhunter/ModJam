@@ -1,44 +1,38 @@
 package uk.co.cloudhunter.rpgthing;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.co.cloudhunter.rpgthing.core.Party;
-import uk.co.cloudhunter.rpgthing.core.PlayerDataNetworkHelper;
-import uk.co.cloudhunter.rpgthing.database.Database;
-import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
-import uk.co.cloudhunter.rpgthing.network.IRPGNetworkHandler;
-import uk.co.cloudhunter.rpgthing.network.ModPacket;
-import uk.co.cloudhunter.rpgthing.network.ServerPacketHandler;
-import uk.co.cloudhunter.rpgthing.partyline.PartylineCommand;
-import uk.co.cloudhunter.rpgthing.partyline.PartylineNetworkHelper;
-import uk.co.cloudhunter.rpgthing.util.TableFactory;
-import uk.co.cloudhunter.rpgthing.util.TaskFactory;
-import net.minecraft.command.ICommandManager;
-import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
+import uk.co.cloudhunter.rpgthing.core.PlayerDataNetworkHelper;
+import uk.co.cloudhunter.rpgthing.database.Database;
+import uk.co.cloudhunter.rpgthing.network.ClientPacketHandler;
+import uk.co.cloudhunter.rpgthing.network.IRPGNetworkHandler;
+import uk.co.cloudhunter.rpgthing.network.ModPacket;
+import uk.co.cloudhunter.rpgthing.network.ServerPacketHandler;
+import uk.co.cloudhunter.rpgthing.partyline.PartylineNetworkHelper;
+import uk.co.cloudhunter.rpgthing.util.TableFactory;
+import uk.co.cloudhunter.rpgthing.util.TaskFactory;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -61,6 +55,7 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 		this.serverNetwork = new ServerPacketHandler();
 		this.partylineNetwork = new PartylineNetworkHelper();
 		this.playerNetwork = new PlayerDataNetworkHelper();
+		GameRegistry.registerPlayerTracker(new PlayerHandler());
 	}
 
 	public Database getDatabase() {
@@ -145,5 +140,23 @@ public class RPGCommonProxy implements IRPGNetworkHandler {
 		EntityLivingBase el = event.entityLiving;
 		cachedPotionEffects.put(Integer.valueOf(el.entityId), el.getActivePotionEffects());
 	}
+	
+	public class PlayerHandler implements IPlayerTracker
+	{
 
+		@Override
+		public void onPlayerLogin(EntityPlayer player) {}
+
+		@Override
+		public void onPlayerLogout(EntityPlayer player) {
+			uk.co.cloudhunter.rpgthing.core.Player.getPlayer(player.username, false).hasDisconnected = true;
+		}
+
+		@Override
+		public void onPlayerChangedDimension(EntityPlayer player) {}
+
+		@Override
+		public void onPlayerRespawn(EntityPlayer player) {}
+		
+	}
 }
