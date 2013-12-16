@@ -27,29 +27,29 @@ public class PartylineCommand extends CommandBase {
 	public String getCommandUsage(ICommandSender icommandsender) {
 		return "commands.party.usage";
 	}
-	
+
 	@Override
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
-    }
-	
+	public int getRequiredPermissionLevel() {
+		return 0;
+	}
+
 	@Override
-    public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr)
-    {
-		if (par2ArrayOfStr.length == 1)
-		{
-			return getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"help", "create", "invite", "eject", "disband", "leave", "accept", "decline"});
+	public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr) {
+		if (par2ArrayOfStr.length == 1) {
+			return getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] { "help", "create", "invite", "eject",
+					"disband", "leave", "accept", "decline" });
 		}
-		
+
 		if (par2ArrayOfStr.length == 2)
 			if (par2ArrayOfStr[0].equals("invite") || par2ArrayOfStr[0].equals("eject"))
-				return getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames());
+				return getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance()
+						.getMinecraftServerInstance().getAllUsernames());
 			else if (par2ArrayOfStr[0].equals("accept") || par2ArrayOfStr[0].equals("decline"))
-				return getListOfStringsMatchingLastWord(par2ArrayOfStr, Player.getPlayer(par1ICommandSender.getCommandSenderName(), false).partyInvites.keySet().toArray(new String[0]));
-		
+				return getListOfStringsMatchingLastWord(par2ArrayOfStr, Player.getPlayer(
+						par1ICommandSender.getCommandSenderName(), false).partyInvites.keySet().toArray(new String[0]));
+
 		return null;
-    }
+	}
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] args) {
@@ -69,7 +69,8 @@ public class PartylineCommand extends CommandBase {
 			} else if ("invite".equals(args[0])) {
 				if (args.length <= 1)
 					throw new WrongUsageException("commands.party.usage");
-				if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args[1]) == null)
+				if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager()
+						.getPlayerForUsername(args[1]) == null)
 					throw new CommandException("commands.party.notExist");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
@@ -81,7 +82,8 @@ public class PartylineCommand extends CommandBase {
 				if (!thePlayer.equals(party.getOwner()))
 					throw new CommandException("commands.party.notOwner");
 				Player.getPlayer(args[1], false).inviteToParty(party);
-				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invite", new Object[] {args[1]}));
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(
+						"commands.party.invite", new Object[] { args[1] }));
 			} else if ("eject".equals(args[0])) {
 				if (args.length <= 1)
 					throw new WrongUsageException("commands.party.usage");
@@ -92,24 +94,25 @@ public class PartylineCommand extends CommandBase {
 				if (!thePlayer.equals(party.getOwner()))
 					throw new CommandException("commands.party.notOwner");
 				party.removePlayer(Player.getPlayer(args[1], false));
-				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.eject", new Object[] {args[1]}));
+				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions(
+						"commands.party.ejected", new Object[] { args[1] }));
 			} else if ("disband".equals(args[0])) {
 				Player thePlayer = Player.getPlayer(player.username, false);
-				
 				Party party = thePlayer.getParty();
 				if (party == null)
 					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
 					throw new CommandException("commands.party.notOwner");
+				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
 				party.disband();
-				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
 			} else if ("leave".equals(args[0])) {
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
 				if (party == null)
 					throw new CommandException("commands.party.none");
 				party.removePlayer(thePlayer);
-				
+				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions(
+						"commands.party.left", new Object[] { args[1] }));
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.leave"));
 			} else if ("accept".equals(args[0])) {
 				if (args.length <= 1)
