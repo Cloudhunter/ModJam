@@ -140,6 +140,7 @@ public class PartylineCommand extends CommandBase {
 				PartyInvite invite = thePlayer.partyInvites.get(args[1]);
 				if (invite == null)
 					throw new CommandException("commands.party.noinvite");
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.decline"));
 				invite.decline();
 			} else
 				throw new WrongUsageException("commands.party.usage");

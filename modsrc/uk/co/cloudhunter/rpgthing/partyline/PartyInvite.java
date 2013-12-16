@@ -18,16 +18,16 @@ public class PartyInvite
 	}
 
 	public void accept() {
-		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.joined", thePlayer.getName()));
+		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.joined", thePlayer.getName()));
 		theParty.addPlayer(thePlayer);
-		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("command.party.selfjoin"));
+		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.selfjoin"));
 		thePlayer.removeInvite(ownerName);
 		thePlayer.clearInvites();
 	}
 	
 	public void decline() {
 		thePlayer.removeInvite(ownerName);
-		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.declined", ownerName));
+		theParty.getOwner().getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.declined", thePlayer.getName()));
 		declineNoRemove();
 	}
 	

@@ -14,3 +14,5 @@ commands.party.left=You have left the party.
 commands.party.noinvite=No such invite.
 commands.party.joined=%s joined the party!
 commands.party.selfjoin=You have joined the party.
+commands.party.declined=%s declined your party invite.
+commands.party.decline=You have declined the party invite.
