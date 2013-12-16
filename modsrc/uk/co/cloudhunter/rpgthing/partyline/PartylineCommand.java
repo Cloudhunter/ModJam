@@ -112,12 +112,16 @@ public class PartylineCommand extends CommandBase {
 				
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.leave"));
 			} else if ("accept".equals(args[0])) {
+				if (args.length <= 1)
+					throw new WrongUsageException("commands.party.usage");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				PartyInvite invite = thePlayer.partyInvites.get(args[1]);
 				if (invite == null)
 					throw new CommandException("commands.party.noinvite");
 				invite.accept();
 			} else if ("decline".equals(args[0])) {
+				if (args.length <= 1)
+					throw new WrongUsageException("commands.party.usage");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				PartyInvite invite = thePlayer.partyInvites.get(args[1]);
 				if (invite == null)
