@@ -35,7 +35,7 @@ public class Player {
 	private WeakReference<EntityPlayer> weakPlayer = new WeakReference<EntityPlayer>(null);
 	private WeakReference<EntityPlayer> weakClientPlayer = new WeakReference<EntityPlayer>(null);
 	
-	private Map <String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
+	public Map <String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
 
 	public boolean isClient;
 	public boolean isModified;
@@ -220,6 +220,7 @@ public class Player {
 		while (it.hasNext())
 		{
 			((PartyInvite)it.next()).declineNoRemove();
+			it.remove();
 		}
 	}
 

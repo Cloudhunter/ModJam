@@ -78,7 +78,7 @@ public class PartylineCommand extends CommandBase {
 				}
 				if (!thePlayer.equals(party.getOwner()))
 					throw new CommandException("commands.party.notOwner");
-				party.addPlayer(Player.getPlayer(args[1], false));
+				Player.getPlayer(args[1], false).inviteToParty(party);
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invite", new Object[] {args[1]}));
 			} else if ("eject".equals(args[0])) {
 				if (args.length <= 1)
@@ -109,7 +109,18 @@ public class PartylineCommand extends CommandBase {
 				party.removePlayer(thePlayer);
 				
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.leave"));
-				
+			} else if ("accept".equals(args[0])) {
+				Player thePlayer = Player.getPlayer(player.username, false);
+				PartyInvite invite = thePlayer.partyInvites.get(args[1]);
+				if (invite == null)
+					throw new CommandException("commands.party.noinvite");
+				invite.accept();
+			} else if ("decline".equals(args[0])) {
+				Player thePlayer = Player.getPlayer(player.username, false);
+				PartyInvite invite = thePlayer.partyInvites.get(args[1]);
+				if (invite == null)
+					throw new CommandException("commands.party.noinvite");
+				invite.decline();
 			}
 			
 			throw new WrongUsageException("commands.party.usage");
