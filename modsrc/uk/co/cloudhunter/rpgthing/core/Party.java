@@ -156,9 +156,11 @@ public class Party {
 
 	public void disband() {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
-		Iterator it = players.iterator();
-		while (it.hasNext())
-			removePlayer((Player) it.next());
+		if (players.size() > 0) {
+			Iterator it = players.iterator();
+			while (it.hasNext())
+				removePlayer((Player) it.next());
+		}
 		isModified = true;
 		isDisbanded = true;
 	}
