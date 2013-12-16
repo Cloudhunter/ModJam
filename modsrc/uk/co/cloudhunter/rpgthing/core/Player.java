@@ -38,9 +38,6 @@ public class Player {
 	private int playerUnspentSkillPoints;
 	private EnumFactions faction = EnumFactions.OVERWORLD;
 
-	private WeakReference<EntityPlayer> weakPlayer = new WeakReference<EntityPlayer>(null);
-	private WeakReference<EntityPlayer> weakClientPlayer = new WeakReference<EntityPlayer>(null);
-
 	public Map<String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
 
 	public boolean isClient;
@@ -210,31 +207,20 @@ public class Player {
 
 	@SideOnly(Side.CLIENT)
 	public EntityPlayer getClientPlayer() {
-		EntityPlayer player = weakClientPlayer.get();
-		if (player == null) {
-			List<EntityPlayer> worldPlayers = Minecraft.getMinecraft().theWorld.playerEntities;
-
-			for (EntityPlayer worldPlayer : worldPlayers)
-				if (worldPlayer.username.equals(playerName)) {
-					player = worldPlayer;
-					break;
-				}
-
-			weakClientPlayer = new WeakReference(player);
-		}
+		List<EntityPlayer> worldPlayers = Minecraft.getMinecraft().theWorld.playerEntities;
+		EntityPlayer player = null;
+		for (EntityPlayer worldPlayer : worldPlayers)
+			if (worldPlayer.username.equals(playerName)) {
+				player = worldPlayer;
+				break;
+			}
 
 		return player;
 	}
 
 	public EntityPlayer getMinecraftPlayer() {
-		EntityPlayer player = weakPlayer.get();
-		if (player == null) {
-			player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager()
-					.getPlayerForUsername(playerName);
-			weakPlayer = new WeakReference(player);
-		}
-
-		return player;
+			return FMLCommonHandler.instance().getMinecraftServerInstance()
+					.getConfigurationManager().getPlayerForUsername(playerName);
 	}
 
 	public boolean pollModified() {
