@@ -1,1 +1,9 @@
-commands.party.usage=/party help:\nSubcommands which accept player as arg - invite, accept, eject\nCommands with no args: disband, leave, help 
+commands.party.usage=/party help for help!
+commands.party.help1=Commands which take player as arg: 
+commands.party.help2=invite, eject, accept, decline
+commands.party.help3=Commands with no args:
+commands.party.help4=help, disband, leave
+commands.party.notexist=Specified player does not exist.
+commands.party.notowner=You are not the party owner!
+commands.party.invite=Invited %s to party.
+commands.party.none=You are not in a party.

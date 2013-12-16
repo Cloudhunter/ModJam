@@ -56,7 +56,12 @@ public class PartylineCommand extends CommandBase {
 		if (args.length == 0)
 			throw new WrongUsageException("commands.party.usage");
 		else if ("help".equals(args[0]))
-			throw new WrongUsageException("commands.party.usage");
+		{
+			icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.help1"));
+			icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.help2"));
+			icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.help3"));
+			icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.help4"));
+		}
 
 		if (icommandsender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) icommandsender;
@@ -65,13 +70,13 @@ public class PartylineCommand extends CommandBase {
 				Player thePlayer = Player.getPlayer(player.username, false);
 				party.addPlayer(thePlayer);
 				party.setOwner(thePlayer);
-				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.create"));
+				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.created"));
 			} else if ("invite".equals(args[0])) {
 				if (args.length <= 1)
 					throw new WrongUsageException("commands.party.usage");
 				if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager()
 						.getPlayerForUsername(args[1]) == null)
-					throw new CommandException("commands.party.notExist");
+					throw new CommandException("commands.party.notexist");
 				Player thePlayer = Player.getPlayer(player.username, false);
 				Party party = thePlayer.getParty();
 				if (party == null) {
@@ -80,7 +85,7 @@ public class PartylineCommand extends CommandBase {
 					party.setOwner(thePlayer);
 				}
 				if (!thePlayer.equals(party.getOwner()))
-					throw new CommandException("commands.party.notOwner");
+					throw new CommandException("commands.party.notowner");
 				Player.getPlayer(args[1], false).inviteToParty(party);
 				icommandsender.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(
 						"commands.party.invite", new Object[] { args[1] }));
@@ -92,7 +97,7 @@ public class PartylineCommand extends CommandBase {
 				if (party == null)
 					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
-					throw new CommandException("commands.party.notOwner");
+					throw new CommandException("commands.party.notowner");
 				party.removePlayer(Player.getPlayer(args[1], false));
 				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions(
 						"commands.party.ejected", new Object[] { args[1] }));
