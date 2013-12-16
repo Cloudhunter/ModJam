@@ -15,6 +15,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -84,16 +85,20 @@ public class GUILayerMipmap extends Gui implements ILayerGUI {
 
 		Vec3 thatV = entity.getPosition(1.0f);
 		Vec3 thisV = mc.thePlayer.getPosition(1.0f);
-		Vec3 product = thisV.subtract(thatV);
-		double inflect = Math.atan2(product.zCoord, product.xCoord);
-		double localInflect = mc.thePlayer.cameraYaw;
-		double productInflect = inflect - localInflect;
+		Vec3 thatthisV = thisV.subtract(thatV);
+		
+		double thisthatAng = Math.atan2(thatthisV.zCoord, thatthisV.xCoord);
+		double yaw = mc.thePlayer.rotationYawHead;
+		while (yaw >= 180.0F)
+			yaw -= 180.0F;
+		double productInflect = (Math.PI * yaw / 180) + thisthatAng;
 
 		double rad = 30.0d;
 		double ddx = rad * Math.cos(productInflect) + cx;
 		double ddy = rad * Math.sin(productInflect) + cy;
-		drawRect((int) ddx - 8, (int) ddy - 8, (int) ddx + 8, (int) ddy + 8, 0xFF000000);
-
+		
+		
+		
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
@@ -101,6 +106,17 @@ public class GUILayerMipmap extends Gui implements ILayerGUI {
 		if (entity instanceof AbstractClientPlayer)
 			return (AbstractClientPlayer) entity;
 		return null;
+	}
+	
+	public void emitQuad(double x, double y, double u, double v, double u2, double v2, double width, double height,
+			double clamp) {
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.addVertexWithUV(x, y + height, this.zLevel, u * clamp, v2 * clamp);
+		tessellator.addVertexWithUV(x + width, y + height, this.zLevel, u2 * clamp, v2 * clamp);
+		tessellator.addVertexWithUV(x + width, y, this.zLevel, u2 * clamp, v * clamp);
+		tessellator.addVertexWithUV(x, y, this.zLevel, u * clamp, v * clamp);
+		tessellator.draw();
 	}
 
 }
