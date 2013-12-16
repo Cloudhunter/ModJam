@@ -11,15 +11,13 @@ public class PartyInvite
 	private Player thePlayer;
 	private String ownerName;
 	
-	public PartyInvite(Party party, Player player)
-	{
+	public PartyInvite(Party party, Player player) {
 		ownerName = party.getOwner().getName();
 		theParty = party;
 		thePlayer = player;
 	}
 
-	public void accept()
-	{
+	public void accept() {
 		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("rpgthing.party.joined", thePlayer.getName()));
 		theParty.addPlayer(thePlayer);
 		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("rpgthing.party.selfjoin"));
@@ -27,20 +25,17 @@ public class PartyInvite
 		thePlayer.clearInvites();
 	}
 	
-	public void decline()
-	{
+	public void decline() {
 		thePlayer.removeInvite(ownerName);
 		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.declined", ownerName));
 		declineNoRemove();
 	}
 	
-	public String getOwnerName()
-	{
+	public String getOwnerName() {
 		return ownerName;
 	}
 
-	public void declineNoRemove()
-	{
+	public void declineNoRemove() {
 		EntityPlayer player = theParty.getOwner().getMinecraftPlayer();
 		player.sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.declineOwner",  thePlayer.getName()));
 	}
