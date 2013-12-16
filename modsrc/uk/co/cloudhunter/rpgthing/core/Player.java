@@ -73,6 +73,13 @@ public class Player {
 		return result;
 	}
 
+	public static void removePlayer(Player player) {
+		playerLock.lock();
+		if (playersServer.containsValue(player))
+			playersServer.remove(player);
+		playerLock.unlock();
+	}
+
 	private Player(String name, boolean isClient) {
 		playerName = name;
 		Map<String, Player> players = isClient ? playersClient : playersServer;

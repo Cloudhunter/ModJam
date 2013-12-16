@@ -63,6 +63,13 @@ public class Party {
 		return new Party(isClient);
 	}
 
+	public static void removeParty(Party party) {
+		partyLock.lock();
+		if (partiesServer.containsValue(party))
+			partiesServer.remove(party.getId());
+		partyLock.unlock();
+	}
+
 	private Party(boolean isClient) {
 		this.isClient = isClient;
 		Database db = RPGThing.getProxy().getDatabase();
@@ -115,6 +122,8 @@ public class Party {
 			players.remove(p);
 			p.setParty(null);
 		}
+		if (owner == p)
+			removeOwner();
 		commit();
 		isModified = true;
 	}
@@ -130,6 +139,12 @@ public class Party {
 
 	public Player getOwner() {
 		return owner;
+	}
+
+	public void removeOwner() {
+		this.owner = players.iterator().next();
+		if (this.owner == null)
+			disband();
 	}
 
 	public int getId() {
@@ -204,6 +219,10 @@ public class Party {
 			if (player != null)
 				player.sendChatToPlayer(component);
 		}
+	}
+	
+	public boolean hasDisbanded() {
+		return isDisbanded;
 	}
 
 }

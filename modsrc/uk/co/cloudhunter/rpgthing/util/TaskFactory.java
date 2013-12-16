@@ -1,5 +1,6 @@
 package uk.co.cloudhunter.rpgthing.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,6 +61,9 @@ public class TaskFactory {
 	};
 
 	private static ISyncTask taskCleanup = new ISyncTask() {
+		private ArrayList<Player> playerDisposeQueue = new ArrayList<Player>();
+		private ArrayList<Party> partyDisposeQueue = new ArrayList<Party>();
+
 		@Override
 		public String uid() {
 			return "cleanup";
@@ -71,11 +75,28 @@ public class TaskFactory {
 				try {
 					Player.playerLock.lock();
 					Party.partyLock.lock();
-					for (Player player : Player.getAllPlayers(false)) {
-						
+					playerDisposeQueue.clear();
+					partyDisposeQueue.clear();
+					for (Player player : Player.getAllPlayers(false))
+						if (player.isDisconnected())
+							playerDisposeQueue.add(player);
+					for (Player player : playerDisposeQueue) {
+						if (player.getParty() != null)
+							player.getParty().removePlayer(player);
+						Player.removePlayer(player);
 					}
-					
-				} finally { 
+					for (Party party : Party.getAllParties(false))
+						if (party.hasDisbanded())
+							partyDisposeQueue.add(party);
+					for (Party party : partyDisposeQueue)
+						Party.removeParty(party);
+					playerDisposeQueue.clear();
+					partyDisposeQueue.clear();
+					if (Player.playerLock.isHeldByCurrentThread())
+						Player.playerLock.unlock();
+					if (Party.partyLock.isHeldByCurrentThread())
+						Party.partyLock.unlock();
+				} finally {
 					if (Player.playerLock.isHeldByCurrentThread())
 						Player.playerLock.unlock();
 					if (Party.partyLock.isHeldByCurrentThread())
