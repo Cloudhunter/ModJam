@@ -34,7 +34,6 @@ public class RPGClientProxy extends RPGCommonProxy {
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		RPGThing.GUIs.registerGUI("PlayerTiles", uk.co.cloudhunter.rpgthing.gui.GUILayerPlayerTiles.class);
-		RPGThing.GUIs.registerGUI("PlayerHeads", uk.co.cloudhunter.rpgthing.gui.GUILayerMipmap.class);
 	}
 
 	@Override
