@@ -133,7 +133,5 @@ public class PartylineCommand extends CommandBase {
 			} else
 				throw new WrongUsageException("commands.party.usage");
 		}
-
 	}
-
 }
