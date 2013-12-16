@@ -18,9 +18,9 @@ public class PartyInvite
 	}
 
 	public void accept() {
-		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("rpgthing.party.joined", thePlayer.getName()));
+		theParty.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions("command.party.joined", thePlayer.getName()));
 		theParty.addPlayer(thePlayer);
-		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("rpgthing.party.selfjoin"));
+		thePlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("command.party.selfjoin"));
 		thePlayer.removeInvite(ownerName);
 		thePlayer.clearInvites();
 	}

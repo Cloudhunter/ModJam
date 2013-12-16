@@ -98,7 +98,13 @@ public class PartylineCommand extends CommandBase {
 					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
 					throw new CommandException("commands.party.notowner");
-				party.removePlayer(Player.getPlayer(args[1], false));
+				Player targetPlayer = Player.getPlayer(args[1], false);
+				if (targetPlayer.getMinecraftPlayer() == null)
+				{
+					throw new CommandException("commands.party.notexist");
+				}
+				party.removePlayer(targetPlayer);
+				targetPlayer.getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.party.kicked"));
 				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationWithSubstitutions(
 						"commands.party.ejected", new Object[] { args[1] }));
 			} else if ("disband".equals(args[0])) {
@@ -107,7 +113,7 @@ public class PartylineCommand extends CommandBase {
 				if (party == null)
 					throw new CommandException("commands.party.none");
 				if (!thePlayer.equals(party.getOwner()))
-					throw new CommandException("commands.party.notOwner");
+					throw new CommandException("commands.party.notowner");
 				party.sendMessageToPlayers(ChatMessageComponent.createFromTranslationKey("commands.party.disband"));
 				party.disband();
 			} else if ("leave".equals(args[0])) {
