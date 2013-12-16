@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.StepSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatMessageComponent;
 import uk.co.cloudhunter.rpgthing.RPGThing;
 import uk.co.cloudhunter.rpgthing.database.Database;
 import uk.co.cloudhunter.rpgthing.database.Database.Row;
@@ -81,6 +82,7 @@ public class Player {
 	
 	public void inviteToParty(Party party) {
 		partyInvites.put(party.getOwner().getName(), new PartyInvite(party, this));
+		getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invited", party.getOwner().getName()));
 	}
 
 	public Party getParty() {
