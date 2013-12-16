@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -20,26 +22,41 @@ import uk.co.cloudhunter.rpgthing.network.StandardModPacket;
 
 public class Party {
 
-	private Row partyRow;
-	private ArrayList<Player> players = new ArrayList<Player>();
-	private Player owner;
-	
+	public static ReentrantLock partyLock = new ReentrantLock();
 	private static Map<Integer, Party> partiesClient = new HashMap<Integer, Party>();
 	private static Map<Integer, Party> partiesServer = new HashMap<Integer, Party>();
 
-	public boolean isClient;
+	private Row partyRow;
+	private ArrayList<Player> players = new ArrayList<Player>();
+	private Player owner;
 
+	public boolean isClient;
 	private boolean isModified;
 	private boolean isDisbanded;
 
 	public static Party getPartyById(int id, boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
-		return parties.containsKey(id) ? parties.get(id) : new Party(id, isClient);
+		try {
+			partyLock.lock();
+			if (parties.containsKey(id)) {
+				Party p = parties.get(id);
+				partyLock.unlock();
+				return p;
+			} else {
+				partyLock.unlock();
+				return new Party(id, isClient);
+			}
+		} finally {
+			partyLock.unlock();
+		}
 	}
 
 	public static Party[] getAllParties(boolean isClient) {
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
-		return parties.values().toArray(new Party[0]);
+		partyLock.lock();
+		Party[] result = parties.values().toArray(new Party[0]);
+		partyLock.unlock();
+		return result;
 	}
 
 	public static Party newParty(boolean isClient) {
@@ -56,7 +73,9 @@ public class Party {
 		unpack();
 
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
+		partyLock.lock();
 		parties.put(this.getId(), this);
+		partyLock.unlock();
 		isModified = true;
 	}
 
@@ -74,7 +93,9 @@ public class Party {
 		unpack();
 
 		Map<Integer, Party> parties = isClient ? partiesClient : partiesServer;
+		partyLock.lock();
 		parties.put(this.getId(), this);
+		partyLock.unlock();
 
 		isModified = true;
 	}
@@ -119,7 +140,7 @@ public class Party {
 		RPGThing.getProxy().getDatabase().get("parties").remove(partyRow.id());
 		Iterator it = players.iterator();
 		while (it.hasNext())
-			removePlayer((Player)it.next());
+			removePlayer((Player) it.next());
 		isModified = true;
 		isDisbanded = true;
 	}
@@ -178,8 +199,7 @@ public class Party {
 	}
 
 	public void sendMessageToPlayers(ChatMessageComponent component) {
-		for (Player p: getPlayers())
-		{
+		for (Player p : getPlayers()) {
 			EntityPlayer player = p.getMinecraftPlayer();
 			if (player != null)
 				player.sendChatToPlayer(component);

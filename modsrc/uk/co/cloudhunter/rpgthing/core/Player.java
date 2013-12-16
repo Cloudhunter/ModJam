@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.ReentrantLock;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -24,6 +25,10 @@ import uk.co.cloudhunter.rpgthing.partyline.PartyInvite;
 
 public class Player {
 
+	public static ReentrantLock playerLock = new ReentrantLock();
+	private static Map<String, Player> playersClient = new HashMap<String, Player>();
+	private static Map<String, Player> playersServer = new HashMap<String, Player>();
+
 	private Row playerRow;
 
 	private String playerName;
@@ -32,34 +37,54 @@ public class Player {
 	private double playerExperience;
 	private int playerUnspentSkillPoints;
 	private EnumFactions faction = EnumFactions.OVERWORLD;
-	
+
 	private WeakReference<EntityPlayer> weakPlayer = new WeakReference<EntityPlayer>(null);
 	private WeakReference<EntityPlayer> weakClientPlayer = new WeakReference<EntityPlayer>(null);
-	
-	public Map <String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
+
+	public Map<String, PartyInvite> partyInvites = new HashMap<String, PartyInvite>();
 
 	public boolean isClient;
 	public boolean isModified;
 
+<<<<<<< HEAD
 	public boolean hasDisconnected = false;
 
 	private static Map<String, Player> playersClient = new HashMap<String, Player>();
 	private static Map<String, Player> playersServer = new HashMap<String, Player>();
 
+=======
+>>>>>>> Party and Player now have locking methods
 	public static Player getPlayer(String username, boolean isClient) {
 		Map<String, Player> players = isClient ? playersClient : playersServer;
-		return players.containsKey(username) ? players.get(username) : new Player(username, isClient);
+		try {
+			playerLock.lock();
+			if (players.containsKey(username)) {
+				Player p = players.get(username);
+				playerLock.unlock();
+				return p;
+			} else {
+				playerLock.unlock();
+				return new Player(username, isClient);
+			}
+		} finally {
+			playerLock.unlock();
+		}
 	}
 
 	public static Player[] getAllPlayers(boolean isClient) {
 		Map<String, Player> players = isClient ? playersClient : playersServer;
-		return players.values().toArray(new Player[0]);
+		playerLock.lock();
+		Player[] result = players.values().toArray(new Player[0]);
+		playerLock.unlock();
+		return result;
 	}
 
 	private Player(String name, boolean isClient) {
 		playerName = name;
 		Map<String, Player> players = isClient ? playersClient : playersServer;
+		playerLock.lock();
 		players.put(name, this);
+		playerLock.unlock();
 		Database db = RPGThing.getProxy().getDatabase();
 		Table playerTable = db.get("players");
 		try {
@@ -81,10 +106,12 @@ public class Player {
 		isModified = true;
 		commit();
 	}
-	
+
 	public void inviteToParty(Party party) {
 		partyInvites.put(party.getOwner().getName(), new PartyInvite(party, this));
-		getMinecraftPlayer().sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invited", party.getOwner().getName()));
+		getMinecraftPlayer().sendChatToPlayer(
+				ChatMessageComponent.createFromTranslationWithSubstitutions("commands.party.invited", party.getOwner()
+						.getName()));
 	}
 
 	public Party getParty() {
@@ -176,65 +203,61 @@ public class Player {
 	public boolean isThisPlayer(EntityPlayer entity) {
 		return entity.username.equals(playerName);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public EntityPlayer getClientPlayer() {
 		EntityPlayer player = weakClientPlayer.get();
-		if (player == null)
-		{
+		if (player == null) {
 			List<EntityPlayer> worldPlayers = Minecraft.getMinecraft().theWorld.playerEntities;
-			
+
 			for (EntityPlayer worldPlayer : worldPlayers)
-				if (worldPlayer.username.equals(playerName))
-				{
+				if (worldPlayer.username.equals(playerName)) {
 					player = worldPlayer;
 					break;
 				}
-			
+
 			weakClientPlayer = new WeakReference(player);
 		}
-		
+
 		return player;
 	}
-	
+
 	public EntityPlayer getMinecraftPlayer() {
 		EntityPlayer player = weakPlayer.get();
-		if (player == null)
-		{
-			player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(playerName);
+		if (player == null) {
+			player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager()
+					.getPlayerForUsername(playerName);
 			weakPlayer = new WeakReference(player);
 		}
-		
+
 		return player;
 	}
 
 	public boolean pollModified() {
 		if (isModified) {
-			RPGThing.getLog().info("Clearing dirty player flag.");
 			isModified = false;
 			return true;
 		}
 		return false;
 	}
 
-	public void clearInvites()
-	{
-		Iterator it = partyInvites.values().iterator();
-		
+	public void clearInvites() {
+		Iterator<PartyInvite> it = partyInvites.values().iterator();
 		while (it.hasNext())
-		{
-			((PartyInvite)it.next()).declineNoRemove();
-			it.remove();
-		}
+			it.next().declineNoRemove();
+		partyInvites.clear();
 	}
 
 	public void removeInvite(String ownerName) {
 		partyInvites.remove(ownerName);
+<<<<<<< HEAD
 	}
 	
 	public boolean isDisconnected()
 	{
 		return hasDisconnected;
+=======
+>>>>>>> Party and Player now have locking methods
 	}
 
 }

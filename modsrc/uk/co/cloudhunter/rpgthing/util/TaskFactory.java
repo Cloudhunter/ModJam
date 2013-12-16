@@ -59,6 +59,32 @@ public class TaskFactory {
 		}
 	};
 
+	private static ISyncTask taskCleanup = new ISyncTask() {
+		@Override
+		public String uid() {
+			return "cleanup";
+		}
+
+		@Override
+		public void call() {
+			if (!Player.playerLock.isLocked() && !Party.partyLock.isLocked()) {
+				try {
+					Player.playerLock.lock();
+					Party.partyLock.lock();
+					for (Player player : Player.getAllPlayers(false)) {
+						
+					}
+					
+				} finally { 
+					if (Player.playerLock.isHeldByCurrentThread())
+						Player.playerLock.unlock();
+					if (Party.partyLock.isHeldByCurrentThread())
+						Party.partyLock.unlock();
+				}
+			}
+		}
+	};
+
 	static {
 		NetSyncQueue.getQueue().addRepeatingTask(syncParty);
 		NetSyncQueue.getQueue().addRepeatingTask(syncPlayer);
