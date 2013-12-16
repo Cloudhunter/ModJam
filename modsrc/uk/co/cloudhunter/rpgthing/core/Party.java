@@ -47,7 +47,8 @@ public class Party {
 				return new Party(id, isClient);
 			}
 		} finally {
-			partyLock.unlock();
+			if (partyLock.isHeldByCurrentThread())
+				partyLock.unlock();
 		}
 	}
 
@@ -220,7 +221,7 @@ public class Party {
 				player.sendChatToPlayer(component);
 		}
 	}
-	
+
 	public boolean hasDisbanded() {
 		return isDisbanded;
 	}

@@ -61,7 +61,8 @@ public class Player {
 				return new Player(username, isClient);
 			}
 		} finally {
-			playerLock.unlock();
+			if (playerLock.isHeldByCurrentThread())
+				playerLock.unlock();
 		}
 	}
 
