@@ -39,12 +39,14 @@ public class PartylineCommand extends CommandBase {
     {
 		if (par2ArrayOfStr.length == 1)
 		{
-			return getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"help", "create", "invite", "eject", "disband", "leave"});
+			return getListOfStringsMatchingLastWord(par2ArrayOfStr, new String[] {"help", "create", "invite", "eject", "disband", "leave", "accept", "decline"});
 		}
 		
 		if (par2ArrayOfStr.length == 2)
 			if (par2ArrayOfStr[0].equals("invite") || par2ArrayOfStr[0].equals("eject"))
 				return getListOfStringsMatchingLastWord(par2ArrayOfStr, FMLCommonHandler.instance().getMinecraftServerInstance().getAllUsernames());
+			else if (par2ArrayOfStr[0].equals("accept") || par2ArrayOfStr[0].equals("decline"))
+				return getListOfStringsMatchingLastWord(par2ArrayOfStr, Player.getPlayer(par1ICommandSender.getCommandSenderName(), false).partyInvites.keySet().toArray(new String[0]));
 		
 		return null;
     }
@@ -121,9 +123,8 @@ public class PartylineCommand extends CommandBase {
 				if (invite == null)
 					throw new CommandException("commands.party.noinvite");
 				invite.decline();
-			}
-			
-			throw new WrongUsageException("commands.party.usage");
+			} else
+				throw new WrongUsageException("commands.party.usage");
 		}
 
 	}
