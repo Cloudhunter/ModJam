@@ -90,6 +90,12 @@ public class TaskFactory {
 							partyDisposeQueue.add(party);
 					for (Party party : partyDisposeQueue)
 						Party.removeParty(party);
+
+					if (playerDisposeQueue.size() > 0)
+						RPGThing.getLog().info("Cleaned " + playerDisposeQueue.size() + " players");
+					if (partyDisposeQueue.size() > 0)
+						RPGThing.getLog().info("Cleaned " + partyDisposeQueue.size() + " parties");
+
 					playerDisposeQueue.clear();
 					partyDisposeQueue.clear();
 					if (Player.playerLock.isHeldByCurrentThread())

@@ -66,8 +66,10 @@ public class Party {
 
 	public static void removeParty(Party party) {
 		partyLock.lock();
-		if (partiesServer.containsValue(party))
+		if (partiesServer.containsValue(party)) {
+			RPGThing.getLog().info("Removing party " + party.getId() + " from cache");
 			partiesServer.remove(party.getId());
+		}
 		partyLock.unlock();
 	}
 

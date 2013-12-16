@@ -76,8 +76,10 @@ public class Player {
 
 	public static void removePlayer(Player player) {
 		playerLock.lock();
-		if (playersServer.containsValue(player))
+		if (playersServer.containsValue(player)) {
+			RPGThing.getLog().info("Removing player " + player.getName() + " from cache");
 			playersServer.remove(player);
+		}
 		playerLock.unlock();
 	}
 
