@@ -109,6 +109,7 @@ public class TaskFactory {
 	static {
 		NetSyncQueue.getQueue().addRepeatingTask(syncParty);
 		NetSyncQueue.getQueue().addRepeatingTask(syncPlayer);
+		NetSyncQueue.getQueue().addRepeatingTask(taskCleanup);
 	}
 
 }
