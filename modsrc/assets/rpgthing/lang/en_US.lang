@@ -6,6 +6,7 @@ commands.party.help4=help, disband, leave
 commands.party.notexist=Specified player does not exist.
 commands.party.notowner=You are not the party owner!
 commands.party.invite=Invited %s to party.
+commands.party.invited=You have been invited to party by %s.
 commands.party.none=You are not in a party.
 commands.party.ejected=%s was ejected from the party.
 commands.party.kicked=You were kicked from the party.
