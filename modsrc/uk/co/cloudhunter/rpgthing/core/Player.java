@@ -46,14 +46,8 @@ public class Player {
 	public boolean isClient;
 	public boolean isModified;
 
-<<<<<<< HEAD
 	public boolean hasDisconnected = false;
 
-	private static Map<String, Player> playersClient = new HashMap<String, Player>();
-	private static Map<String, Player> playersServer = new HashMap<String, Player>();
-
-=======
->>>>>>> Party and Player now have locking methods
 	public static Player getPlayer(String username, boolean isClient) {
 		Map<String, Player> players = isClient ? playersClient : playersServer;
 		try {
@@ -250,14 +244,10 @@ public class Player {
 
 	public void removeInvite(String ownerName) {
 		partyInvites.remove(ownerName);
-<<<<<<< HEAD
 	}
-	
-	public boolean isDisconnected()
-	{
+
+	public boolean isDisconnected() {
 		return hasDisconnected;
-=======
->>>>>>> Party and Player now have locking methods
 	}
 
 }
