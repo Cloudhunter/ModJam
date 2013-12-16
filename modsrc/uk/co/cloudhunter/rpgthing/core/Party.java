@@ -143,9 +143,9 @@ public class Party {
 	}
 
 	public void removeOwner() {
-		this.owner = players.iterator().next();
-		if (this.owner == null)
+		if (players.size() == 0)
 			disband();
+		this.owner = players.iterator().next();
 	}
 
 	public int getId() {
