@@ -73,11 +73,11 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		int dlen = mc.fontRenderer.getStringWidth(label) - 8;
 		if (entity != null && entity.isDead)
 			GL11.glColor3d(1.0, 0.25, 0.25);
-		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-label.png"));
+		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "textures/gui/player-label.png"));
 		emitQuad(x + 12, y, 12, 13, 32, 51, 10, 32, 0.015625d);
 		emitQuad(x + 12 + 10, y, 26, 13, 36, 51, dlen, 32, 0.015625d);
 		emitQuad(x + 12 + 10 + dlen, y, 32, 13, 52, 51, 10, 32, 0.015625d);
-		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-frame.png"));
+		mc.getTextureManager().bindTexture(new ResourceLocation(RPGThing.assetKey(), "textures/gui/player-frame.png"));
 		emitQuad(x - 11, y + 10, 0.25f, 0.25f, 0.85f, 0.85f, 26, 26, 1.0F);
 
 		float health = (entity != null) ? Math.max(0, entity.getHealth()) : 0;
@@ -115,7 +115,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		mc.getTextureManager()
-				.bindTexture(new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crowns.png"));
+				.bindTexture(new ResourceLocation(RPGThing.assetKey(), "textures/gui/player-crowns.png"));
 		if (entity == null)
 			emitQuad(x + 4, y + 24, 0f, 0.5f, 0.5f, 1f, 8, 8, 1.0f);
 		else if (Player.getPlayer(entity.username, true).getParty() == null
@@ -133,7 +133,7 @@ public class GUILayerPlayerTiles extends Gui implements ILayerGUI {
 				double opacity = (1 + Math.sin(0.125 * frameGlowCount++)) / 2;
 				GL11.glColor4d(1.0d, 1.0d, 1.0d, opacity);
 				mc.getTextureManager().bindTexture(
-						new ResourceLocation(RPGThing.assetKey(), "/textures/gui/player-crown-glow.png"));
+						new ResourceLocation(RPGThing.assetKey(), "textures/gui/player-crown-glow.png"));
 				emitQuad(x + 4, y + 9, 0f, 0f, 1f, 1f, 8, 8, 1.0f);
 				GL11.glPopMatrix();
 			}
